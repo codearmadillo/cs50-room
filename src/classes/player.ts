@@ -11,6 +11,7 @@ export class Player {
   private dx : number = 0;
   private dy : number = 0;
   private readonly controller : Joystick;
+  private readonly controller_deadzone : number = 0.25;
   constructor(
     x : number,
     y : number,
@@ -41,7 +42,30 @@ export class Player {
     const input = { up: false, down: false, left: false, right: false };
     /** Check */
     if(this.controls === 'controller' && this.controller && this.controller.isConnected()) {
-      print(this.controller.getAxis(0));
+      /** Get axis */
+      let axis_x = this.controller.getAxis(1);
+      let axis_y = this.controller.getAxis(2);
+      /** Evaluate movemen tvalue */
+      if(math.abs(axis_y) < this.controller_deadzone) {
+        input.up = false;
+        input.down = false;
+      } else {
+        if(1 * (axis_y / math.abs(axis_y)) < 0) {
+          input.up = true;
+        } else {
+          input.down = true;
+        }
+      }
+      if(math.abs(axis_x) < this.controller_deadzone) {
+        input.right = false;
+        input.left = false;
+      } else {
+        if(1 * (axis_x / math.abs(axis_x)) < 0) {
+          input.left = true;
+        } else {
+          input.right = true;
+        }
+      }
     } else {
       input.up = love.keyboard.isDown('w');
       input.down = love.keyboard.isDown('s');
