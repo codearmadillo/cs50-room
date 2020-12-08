@@ -1,0 +1,21 @@
+{
+  "name": "ts-to-lua",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tstl",
+    "build:watch": "tstl --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "gulp": "^4.0.2",
+    "love-typescript-definitions": "^0.22.1",
+    "lua-types": "^2.8.0",
+    "tsc-watch": "^4.2.9",
+    "typescript": "^4.1.2",
+    "typescript-to-lua": "^0.36.0"
+  }
+}

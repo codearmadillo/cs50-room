@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["esnext"],
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "types": [
+      "lua-types/jit",
+      "love-typescript-definitions"
+    ],
+    "strict": true
+  },
+  "tstl": {
+    "luaTarget": "JIT",
+    "luaLibImport": "require",
+    "noImplicitSelf": true,
+    "sourceMapTraceback": true
+  }
+}
