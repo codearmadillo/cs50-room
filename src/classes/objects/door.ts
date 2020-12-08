@@ -2,8 +2,8 @@ import { environment } from "../../config/environment";
 import { GameObject } from "../game-object";
 
 export class Door extends GameObject {
-  public readonly width : number = 43;
-  public readonly height : number = 85;
+  public readonly width : number = 52;
+  public readonly height : number = 105;
   public get bouncing_box() {
     return {
       x1: this.x - 2,
