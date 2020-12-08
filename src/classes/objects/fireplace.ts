@@ -4,7 +4,16 @@ import { GameObject } from "../game-object";
 
 export class Fireplace extends GameObject {
   public readonly width : number = 125;
+  private readonly base_height = 35;
   public readonly height : number = 85;
+  public get bouncing_box() {
+    return {
+      x1: this.x - 10,
+      y1: this.y + 15,
+      x2: this.x + this.width + 10,
+      y2: this.y - this.base_height - 15
+    }
+  }
   constructor(
     protected _x : number,
     protected _y : number
@@ -52,12 +61,11 @@ export class Fireplace extends GameObject {
     );
   }
   private draw_base() {
-    const height = 35;
     const thickness = 11;
     love.graphics.rectangle(
       'line',
-      this.x, this.y - height - thickness,
-      this.width, height
+      this.x, this.y - this.base_height - thickness,
+      this.width, this.base_height
     );
     love.graphics.line(
       this.x, this.y - thickness,
@@ -65,9 +73,14 @@ export class Fireplace extends GameObject {
       this.x + this.width, this.y,
       this.x + this.width, this.y - thickness,
     );
+    love.graphics.rectangle(
+      'line',
+      this.x - 10,
+      this.y - this.base_height - thickness - 4,
+      this.width + 20, this.base_height + 26
+    )
   }
   private draw_fireplace() {
-    const base_height = 35;
     const base_thickness = 11;
     const conn_size = 25;
     /** Pillars */
@@ -93,16 +106,24 @@ export class Fireplace extends GameObject {
       );
     });
     /** Now - Render FIRE! */
-    const render_block = (x : number, y : number, width : number, height : number) => {
-      const arr = [];
-      for(let i = 0; i < height; i++) {
-        arr.push(1 - i * 0.2);
-      }
-      arr.forEach((colour, j) => {
-        love.graphics.setColor(colour, colour, colour, 1);
-        love.graphics.line(x, y - j, x + width, y - j);
-      });
+    const render_log = (x : number, y : number, width : number, height : number) => {
+      /** Mask */
+      love.graphics.setColor(0, 0, 0, 1);
+      love.graphics.rectangle('fill', x, y, width, height);
+      /** Shape */
+      love.graphics.setColor(1, 1, 1, 1);
+      love.graphics.rectangle('line', x, y, width, height);
+      /** Render random wood artifacts */
+      love.graphics.setColor(.8, .8, .8, 1);
+      love.graphics.line(x + 4, y + height * 0.2, x + width * 0.7, y + height * 0.2);
+      love.graphics.line(x + 8, y + height * 0.4, x + width * 0.3, y + height * 0.4);
+      love.graphics.line(x + width, y + height * 0.75, x + width - (width * 0.6), y + height * 0.75);
     }
-    render_block(this.x, this.y - 300, 35, 8);
+    /*
+    render_block(this.x + this.width / 2 - 28, this.y - base_thickness - 8 - 16, 56, 16);
+    */
+    render_log(this.x + this.width / 2 - 28, this.y - base_thickness - 8 - 28, 56, 16);
+    render_log(this.x + this.width / 2 - 21, this.y - base_thickness - 8 - 28, 42, 12);
+    render_log(this.x + this.width / 2 - 25, this.y - base_thickness - 8 - 16, 48, 16);
   }
 }

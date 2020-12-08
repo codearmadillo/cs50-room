@@ -19,9 +19,10 @@ export abstract class GameObject {
     }
   }
   draw() { }
-  draw_bouncing_box(color : [number, number, number, number] = [ 0, 0, 1, 1 ]) {
+  draw_bouncing_box(color : [number, number, number, number] = [ 0, 0, 1, .5 ]) {
     love.graphics.setColor(color);
-    love.graphics.line(
+    love.graphics.polygon(
+      'fill',
       this.bouncing_box.x1, this.bouncing_box.y1,
       this.bouncing_box.x2, this.bouncing_box.y1,
       this.bouncing_box.x2, this.bouncing_box.y2,

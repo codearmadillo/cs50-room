@@ -54,7 +54,7 @@ export class Player extends GameObject {
       this.width, this.height
     );
     if(environment.bouncingBoxes) {
-      this.draw_bouncing_box([1, 0, 0, 1]);
+      this.draw_bouncing_box([1, 0, 0, .5]);
     }
   }
   /**
