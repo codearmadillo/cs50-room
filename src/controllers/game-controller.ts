@@ -1,5 +1,5 @@
 import { Player } from "../classes/player";
-import { FirstRoom } from "../classes/room";
+import { FirstRoom } from "../classes/rooms/first";
 import { IRoom } from "../interfaces/room";
 
 export class Game {

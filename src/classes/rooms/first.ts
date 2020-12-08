@@ -1,8 +1,8 @@
-import { Room } from "../abstract/room";
-import { IRoom } from "../interfaces/room";
-import { Table } from "./objects/table";
+import { GenericRoom } from "../../abstract/room";
+import { IRoom } from "../../interfaces/room";
+import { Table } from "../objects/table";
 
-export class FirstRoom extends Room implements IRoom {
+export class FirstRoom extends GenericRoom implements IRoom {
   constructor(
     protected readonly window_width : number, protected readonly window_height : number
   ) {

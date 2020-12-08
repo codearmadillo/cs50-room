@@ -13,7 +13,7 @@ interface PointDefinitions {
   }
 }
 
-export abstract class Room implements IRoom {
+export abstract class GenericRoom implements IRoom {
   public readonly constraints = {
     y1 : 0.1 * this.window_height,
     y2 : 0.9 * this.window_height,
@@ -25,13 +25,13 @@ export abstract class Room implements IRoom {
   protected readonly points : PointDefinitions = {
     inner : {
       left: [
-        0.5 * this.window_width - this.door_size / 2, this.constraints.y1,
+        0.35 * this.window_width - this.door_size / 2, this.constraints.y1,
         this.constraints.x1, this.constraints.y1,
         this.constraints.x1, this.constraints.y2,
         0.5 * this.window_width - this.door_size / 2, this.constraints.y2,
       ],
       right: [
-        0.5 * this.window_width + this.door_size / 2, this.constraints.y1,
+        0.35 * this.window_width + this.door_size / 2, this.constraints.y1,
         this.constraints.x2, this.constraints.y1,
         this.constraints.x2, this.constraints.y2,
         0.5 * this.window_width + this.door_size / 2, this.constraints.y2
@@ -39,13 +39,13 @@ export abstract class Room implements IRoom {
     },
     outer : {
       left: [
-        0.5 * this.window_width - this.door_size / 2, this.constraints.y1 - this.wall_size,
+        0.35 * this.window_width - this.door_size / 2, this.constraints.y1 - this.wall_size,
         this.constraints.x1 - this.wall_size, this.constraints.y1 - this.wall_size,
         this.constraints.x1 - this.wall_size, this.constraints.y2 + this.wall_size,
         0.5 * this.window_width - this.door_size / 2, this.constraints.y2 + this.wall_size
       ],
       right: [
-        0.5 * this.window_width + this.door_size / 2, this.constraints.y1 - this.wall_size,
+        0.35 * this.window_width + this.door_size / 2, this.constraints.y1 - this.wall_size,
         this.constraints.x2 + this.wall_size, this.constraints.y1 - this.wall_size,
         this.constraints.x2 + this.wall_size, this.constraints.y2 + this.wall_size,
         0.5 * this.window_width + this.door_size / 2, this.constraints.y2 + this.wall_size

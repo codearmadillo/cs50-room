@@ -1,4 +1,5 @@
 import { Joystick } from "love.joystick";
+import { environment } from "../config/environment";
 import { Game } from "../controllers/game-controller";
 import { GameObject } from "./game-object";
 
@@ -52,6 +53,9 @@ export class Player extends GameObject {
       this.x, this.y,
       this.width, this.height
     );
+    if(environment.bouncingBoxes) {
+      this.draw_bouncing_box([1, 0, 0, 1]);
+    }
   }
   /**
    * Checks collision provided axis

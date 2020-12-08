@@ -1,7 +1,4 @@
-import { Player } from "./classes/player";
-import { FirstRoom } from "./classes/room";
 import { Game } from "./controllers/game-controller";
-import { IRoom } from "./interfaces/room";
 
 const game = new Game();
 
