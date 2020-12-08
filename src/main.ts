@@ -18,3 +18,6 @@ love.update = (dt) => {
 love.draw = () => {
   game.draw();
 }
+love.joystickaxis = (jst, axis, value) => {
+  print(axis, value);
+}

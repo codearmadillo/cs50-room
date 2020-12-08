@@ -1,5 +1,4 @@
-import { InputController } from "../interfaces/input";
-import { KeyDefinitions } from "../types/input";
+import { Joystick } from "love.joystick";
 
 export class Player {
   private speed : number = 300;
@@ -11,15 +10,19 @@ export class Player {
   public get y() { return this._y; };
   private dx : number = 0;
   private dy : number = 0;
+  private readonly controller : Joystick;
   constructor(
     x : number,
     y : number,
-    private readonly inputController : InputController
+    private readonly controls : 'controller' | 'keyboard'
   ) {
     this._x = x;
     this._y = y;
+    /** Get controller */
+    this.controller = love.joystick.getJoysticks()?.[0] || null;
   }
   update(dt : number) : void {
+    /** Increase velocity */
     this.movement();
     /** Update position */
     this._x += this.dx * dt;
@@ -34,29 +37,36 @@ export class Player {
     );
   }
   private movement() {
-    /** Vertical */
-    const down = this.inputController.isPressed(KeyDefinitions.PLAYER_DOWN);
-    const up = this.inputController.isPressed(KeyDefinitions.PLAYER_UP);
-    if(down && up) {
+    /** Define input */
+    const input = { up: false, down: false, left: false, right: false };
+    /** Check */
+    if(this.controls === 'controller' && this.controller && this.controller.isConnected()) {
+      print(this.controller.getAxis(0));
+    } else {
+      input.up = love.keyboard.isDown('w');
+      input.down = love.keyboard.isDown('s');
+      input.left = love.keyboard.isDown('a');
+      input.right = love.keyboard.isDown('d');
+    }
+    /** Change velocity on Y */
+    if(input.down && input.up) {
       this.dy = 0;
     } else {
-      if(down) {
+      if(input.down) {
         this.dy = this.speed;
-      } else if(up) {
+      } else if(input.up) {
         this.dy = -this.speed;
       } else {
         this.dy = 0;
       }
     }
-    /** Horizontal */
-    const left = this.inputController.isPressed(KeyDefinitions.PLAYER_LEFT);
-    const right = this.inputController.isPressed(KeyDefinitions.PLAYER_RIGHT);
-    if(left && right) {
+    /** Change velocity on X */
+    if(input.left && input.right) {
       this.dx = 0;
     } else {
-      if(right) {
+      if(input.right) {
         this.dx = this.speed;
-      } else if (left) {
+      } else if (input.left) {
         this.dx = -this.speed;
       } else {
         this.dx = 0;

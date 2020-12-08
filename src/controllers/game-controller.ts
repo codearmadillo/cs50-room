@@ -1,22 +1,13 @@
 import { Player } from "../classes/player";
 import { FirstRoom } from "../classes/room";
-import { InputController as IInputController } from "../interfaces/input";
-import { InputController } from "../controllers/input-controller";
 import { IRoom } from "../interfaces/room";
-import { KeyboardControls } from "../config/keyboard-controls";
 
 export class Game {
   private readonly window_width : number = 768;
   private readonly window_height : number = 768;
   private room !: IRoom;
   private player !: Player;
-  /** Controllers */
-  private readonly inputController : IInputController;
-  constructor() {
-    this.inputController = new InputController(
-      KeyboardControls
-    );
-  }
+  constructor() { }
   load() {
     /** Set window */
     love.graphics.setDefaultFilter('nearest', 'nearest');
@@ -37,7 +28,7 @@ export class Game {
     this.player = new Player(
       this.window_width / 2,
       this.window_height / 2,
-      this.inputController
+      'controller'
     );
   }
   update(dt : number) {
