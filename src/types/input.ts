@@ -1,0 +1,6 @@
+export enum KeyDefinitions {
+  PLAYER_UP = 'PLAYER_UP',
+  PLAYER_DOWN = 'PLAYER_DOWN',
+  PLAYER_LEFT = 'PLAYER_LEFT',
+  PLAYER_RIGHT = 'PLAYER_RIGHT'
+}
