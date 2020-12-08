@@ -7,8 +7,6 @@ export class FirstRoom extends GenericRoom implements IRoom {
     protected readonly window_width : number, protected readonly window_height : number
   ) {
     super(window_width, window_height);
-    /** Register objects */
-    this.add_scene_object(new Table(250, 250, 160, 95));
   }
   draw() {
     super.draw();

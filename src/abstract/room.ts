@@ -1,4 +1,10 @@
 import { GameObject } from "../classes/game-object";
+import { Armchair } from "../classes/objects/armchair";
+import { Couch } from "../classes/objects/couch";
+import { Door } from "../classes/objects/door";
+import { Fireplace } from "../classes/objects/fireplace";
+import { Piano } from "../classes/objects/piano";
+import { SmallTable } from "../classes/objects/small-table";
 import { IRoom } from "../interfaces/room";
 import { BouncingBoxConstraints } from "../types/boucing-box";
 
@@ -56,7 +62,16 @@ export abstract class GenericRoom implements IRoom {
   public get static_objects() {
     return this._static_objects;
   }
-  constructor(protected readonly window_width : number, protected readonly window_height : number) { }
+  constructor(protected readonly window_width : number, protected readonly window_height : number) {
+    /** Add generic static objects */
+    this.add_scene_object(new Armchair(this.constraints.x2 - 200, this.constraints.y1 + 100));
+    this.add_scene_object(new SmallTable(this.constraints.x2 - 300, this.constraints.y1 + 100));
+    this.add_scene_object(new Piano(this.constraints.x1 + 50, this.constraints.y1 + 200));
+    this.add_scene_object(new Couch(this.constraints.x1 + 75, this.constraints.y2 - 300));
+    this.add_scene_object(new Fireplace(this.constraints.x1 + 105, this.constraints.y2));
+    this.add_scene_object(new Door(this.constraints.x1 + 50, this.constraints.y1));
+    this.add_scene_object(new Door(this.constraints.x2 - 150, this.constraints.y2));
+  }
   update(dt : number) { }
   draw() {
     this.draw_room();
@@ -70,6 +85,19 @@ export abstract class GenericRoom implements IRoom {
     this._static_objects.splice(index, 1);
   }
   private draw_room() {
+
+
+    love.graphics.setColor(1, 1, 1, 1);
+    love.graphics.setLineWidth(1);
+    love.graphics.line(
+      this.constraints.x1, this.constraints.y1,
+      this.constraints.x2, this.constraints.y1,
+      this.constraints.x2, this.constraints.y2,
+      this.constraints.x1, this.constraints.y2,
+      this.constraints.x1, this.constraints.y1,
+    )
+    return;
+
     /** Set base */
     love.graphics.setColor(1, 1, 1, 1);
     love.graphics.setLineWidth(1);
