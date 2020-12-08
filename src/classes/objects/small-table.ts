@@ -14,7 +14,11 @@ export class SmallTable extends GameObject {
     const color = love.graphics.getColor();
     love.graphics.setColor(1, 1, 1, 1);
     /** Board */
-    love.graphics.rectangle('line', this.x, this.y, this.width, this.height);
+    love.graphics.ellipse(
+      'line',
+      this.x, this.y,
+      100, 50
+    );
     /** Bouncing box */
     if(environment.bouncingBoxes) {
       this.draw_bouncing_box();
