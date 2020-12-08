@@ -93,14 +93,16 @@ export class Fireplace extends GameObject {
       );
     });
     /** Now - Render FIRE! */
-    const render_block = (x : number, y : number, size : number) => {
-      for(let i = 0; i < size; ++i) {
-        love.graphics.line(x, y - i, x + size, y - i);
+    const render_block = (x : number, y : number, width : number, height : number) => {
+      const arr = [];
+      for(let i = 0; i < height; i++) {
+        arr.push(1 - i * 0.2);
       }
-      [1,.9,.8,.7,.6].forEach((whiteMultiplier) => {
-
+      arr.forEach((colour, j) => {
+        love.graphics.setColor(colour, colour, colour, 1);
+        love.graphics.line(x, y - j, x + width, y - j);
       });
     }
-    render_block(this.x, this.y - 300, 5);
+    render_block(this.x, this.y - 300, 35, 8);
   }
 }
