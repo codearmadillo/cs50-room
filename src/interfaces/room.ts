@@ -1,12 +1,9 @@
+import { GameObject } from "../classes/game-object";
+import { BouncingBoxConstraints } from "../types/boucing-box";
+
 export interface IRoom {
-  constraints : {
-    left : number,
-    right : number,
-    bottom : number,
-    top : number,
-  }
-  onEnter() : void;
-  onExit() : void;
+  constraints : BouncingBoxConstraints;
   update(dt : number) : void;
   draw() : void;
+  readonly static_objects : GameObject[];
 }

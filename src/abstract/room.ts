@@ -1,4 +1,6 @@
+import { GameObject } from "../classes/game-object";
 import { IRoom } from "../interfaces/room";
+import { BouncingBoxConstraints } from "../types/boucing-box";
 
 interface PointDefinitions {
   inner : {
@@ -13,50 +15,59 @@ interface PointDefinitions {
 
 export abstract class Room implements IRoom {
   public readonly constraints = {
-    top : 0.1 * this.window_height,
-    bottom : 0.9 * this.window_height,
-    left : 0.2 * this.window_width,
-    right : 0.8 * this.window_width
+    y1 : 0.1 * this.window_height,
+    y2 : 0.9 * this.window_height,
+    x1 : 0.2 * this.window_width,
+    x2 : 0.8 * this.window_width
   }
   protected readonly wall_size : number = 45;
   protected readonly door_size : number = 90;
   protected readonly points : PointDefinitions = {
     inner : {
       left: [
-        0.5 * this.window_width - this.door_size / 2, this.constraints.top,
-        this.constraints.left, this.constraints.top,
-        this.constraints.left, this.constraints.bottom,
-        0.5 * this.window_width - this.door_size / 2, this.constraints.bottom,
+        0.5 * this.window_width - this.door_size / 2, this.constraints.y1,
+        this.constraints.x1, this.constraints.y1,
+        this.constraints.x1, this.constraints.y2,
+        0.5 * this.window_width - this.door_size / 2, this.constraints.y2,
       ],
       right: [
-        0.5 * this.window_width + this.door_size / 2, this.constraints.top,
-        this.constraints.right, this.constraints.top,
-        this.constraints.right, this.constraints.bottom,
-        0.5 * this.window_width + this.door_size / 2, this.constraints.bottom
+        0.5 * this.window_width + this.door_size / 2, this.constraints.y1,
+        this.constraints.x2, this.constraints.y1,
+        this.constraints.x2, this.constraints.y2,
+        0.5 * this.window_width + this.door_size / 2, this.constraints.y2
       ]
     },
     outer : {
       left: [
-        0.5 * this.window_width - this.door_size / 2, this.constraints.top - this.wall_size,
-        this.constraints.left - this.wall_size, this.constraints.top - this.wall_size,
-        this.constraints.left - this.wall_size, this.constraints.bottom + this.wall_size,
-        0.5 * this.window_width - this.door_size / 2, this.constraints.bottom + this.wall_size
+        0.5 * this.window_width - this.door_size / 2, this.constraints.y1 - this.wall_size,
+        this.constraints.x1 - this.wall_size, this.constraints.y1 - this.wall_size,
+        this.constraints.x1 - this.wall_size, this.constraints.y2 + this.wall_size,
+        0.5 * this.window_width - this.door_size / 2, this.constraints.y2 + this.wall_size
       ],
       right: [
-        0.5 * this.window_width + this.door_size / 2, this.constraints.top - this.wall_size,
-        this.constraints.right + this.wall_size, this.constraints.top - this.wall_size,
-        this.constraints.right + this.wall_size, this.constraints.bottom + this.wall_size,
-        0.5 * this.window_width + this.door_size / 2, this.constraints.bottom + this.wall_size
+        0.5 * this.window_width + this.door_size / 2, this.constraints.y1 - this.wall_size,
+        this.constraints.x2 + this.wall_size, this.constraints.y1 - this.wall_size,
+        this.constraints.x2 + this.wall_size, this.constraints.y2 + this.wall_size,
+        0.5 * this.window_width + this.door_size / 2, this.constraints.y2 + this.wall_size
       ]
     }
   };
-  abstract onEnter() : void;
-  abstract onExit() : void;
+  private readonly _static_objects : GameObject[] = [];
+  public get static_objects() {
+    return this._static_objects;
+  }
   constructor(protected readonly window_width : number, protected readonly window_height : number) { }
   update(dt : number) { }
   draw() {
     this.draw_room();
     this.draw_doors();
+    this.draw_objects();
+  }
+  protected add_scene_object(object : GameObject) {
+    this._static_objects.push(object);
+  }
+  protected remove_scene_object(index : number) {
+    this._static_objects.splice(index, 1);
   }
   private draw_room() {
     /** Set base */
@@ -85,5 +96,10 @@ export abstract class Room implements IRoom {
   }
   private draw_doors() {
 
+  }
+  private draw_objects() {
+    this.static_objects.forEach((object) => {
+      object.draw();
+    });
   }
 }

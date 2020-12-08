@@ -28,7 +28,7 @@ export class Game {
     this.player = new Player(
       this,
       this.window_width / 2,
-      this.window_height / 2,
+      this.window_height / 2 + 100,
       'keyboard'
     );
   }

@@ -1,24 +1,27 @@
 import { Joystick } from "love.joystick";
 import { Game } from "../controllers/game-controller";
+import { GameObject } from "./game-object";
 
-export class Player {
+export class Player extends GameObject {
+  /** Size */
+  readonly width : number = 48;
+  readonly height : number = 48;
+  /** Movement speed */
   private speed : number = 250;
-  private width : number = 48;
-  private height : number = 48;
-  private _x : number = 0;
-  private _y : number = 0;
-  public get x() { return this._x; };
-  public get y() { return this._y; };
-  private dx : number = 0;
-  private dy : number = 0;
+  /** Velocity */
+  public dx : number = 0;
+  public dy : number = 0;
+  /** Controller */
   private readonly controller : Joystick;
   private readonly controller_deadzone : number = 0.25;
+  /** Constructor */
   constructor(
     private readonly game : Game,
     x : number,
     y : number,
     private readonly controls : 'controller' | 'keyboard'
   ) {
+    super();
     this._x = x;
     this._y = y;
     /** Get controller */
@@ -29,12 +32,12 @@ export class Player {
     this.movement();
     /** X axis */
     if(this.dx !== 0) {
-      if(this.collides('x')) {
+      if(this.check_collisions('x')) {
         this.dx = 0;
       }
     }
     if(this.dy !== 0) {
-      if(this.collides('y')) {
+      if(this.check_collisions('y')) {
         this.dy = 0;
       }
     }
@@ -54,7 +57,7 @@ export class Player {
    * Checks collision provided axis
    * @param axis 
    */
-  private collides(axis : 'x' | 'y') : boolean {
+  private check_collisions(axis : 'x' | 'y') : boolean {
     /** Define empty position that will be used for checking */
     let offset : number = 5;
     let position : number;
@@ -66,14 +69,15 @@ export class Player {
     }
     /** Check room boundaries */
     if(axis === 'x') {
-      if(position <= this.game.room.constraints.left || position >= this.game.room.constraints.right) {
+      if(position <= this.game.room.constraints.x1 || position >= this.game.room.constraints.x2) {
         return true;
       }
     } else {
-      if(position <= this.game.room.constraints.top || position >= this.game.room.constraints.bottom) {
+      if(position <= this.game.room.constraints.y1 || position >= this.game.room.constraints.y2) {
         return true;
       }
     }
+    /** False if no collision detected */
     return false;
   }
   private movement() {
