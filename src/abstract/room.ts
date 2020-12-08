@@ -21,7 +21,7 @@ interface PointDefinitions {
 
 export abstract class GenericRoom implements IRoom {
   public readonly constraints = {
-    y1 : 0.1 * this.window_height,
+    y1 : 0.18 * this.window_height,
     y2 : 0.9 * this.window_height,
     x1 : 0.2 * this.window_width,
     x2 : 0.8 * this.window_width
@@ -66,11 +66,11 @@ export abstract class GenericRoom implements IRoom {
     /** Add generic static objects */
     this.add_scene_object(new Armchair(this.constraints.x2 - 200, this.constraints.y1 + 100));
     this.add_scene_object(new SmallTable(this.constraints.x2 - 300, this.constraints.y1 + 100));
-    this.add_scene_object(new Piano(this.constraints.x1 + 50, this.constraints.y1 + 200));
-    this.add_scene_object(new Couch(this.constraints.x1 + 75, this.constraints.y2 - 300));
+    this.add_scene_object(new Piano(this.constraints.x1 + 10, this.constraints.y1 + 100));
+    this.add_scene_object(new Couch(this.constraints.x1 + 175, this.constraints.y2 - 300));
     this.add_scene_object(new Fireplace(this.constraints.x1 + 105, this.constraints.y2));
     this.add_scene_object(new Door(this.constraints.x1 + 50, this.constraints.y1));
-    this.add_scene_object(new Door(this.constraints.x2 - 150, this.constraints.y2));
+    this.add_scene_object(new Door(this.constraints.x2 - 100, this.constraints.y2));
   }
   update(dt : number) { }
   draw() {
