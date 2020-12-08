@@ -12,39 +12,41 @@ interface PointDefinitions {
 }
 
 export abstract class Room implements IRoom {
+  public readonly constraints = {
+    top : 0.1 * this.window_height,
+    bottom : 0.9 * this.window_height,
+    left : 0.2 * this.window_width,
+    right : 0.8 * this.window_width
+  }
   protected readonly wall_size : number = 45;
   protected readonly door_size : number = 90;
   protected readonly points : PointDefinitions = {
     inner : {
       left: [
-        0.5 * this.window_width - this.door_size / 2, 0.1 * this.window_height,
-        0.2 * this.window_width, 0.1 * this.window_height,
-        0.2 * this.window_width, 0.5 * this.window_height,
-        0.1 * this.window_width, 0.5 * this.window_height,
-        0.1 * this.window_width, 0.9 * this.window_height,
-        0.5 * this.window_width - this.door_size / 2, 0.9 * this.window_height
+        0.5 * this.window_width - this.door_size / 2, this.constraints.top,
+        this.constraints.left, this.constraints.top,
+        this.constraints.left, this.constraints.bottom,
+        0.5 * this.window_width - this.door_size / 2, this.constraints.bottom,
       ],
       right: [
-        0.5 * this.window_width + this.door_size / 2, 0.1 * this.window_height,
-        0.9 * this.window_width, 0.1 * this.window_height,
-        0.9 * this.window_width, 0.9 * this.window_height,
-        0.5 * this.window_width + this.door_size / 2, 0.9 * this.window_height
+        0.5 * this.window_width + this.door_size / 2, this.constraints.top,
+        this.constraints.right, this.constraints.top,
+        this.constraints.right, this.constraints.bottom,
+        0.5 * this.window_width + this.door_size / 2, this.constraints.bottom
       ]
     },
     outer : {
       left: [
-        0.5 * this.window_width - this.door_size / 2, 0.1 * this.window_height - this.wall_size,
-        0.2 * this.window_width - this.wall_size, 0.1 * this.window_height - this.wall_size,
-        0.2 * this.window_width - this.wall_size, 0.5 * this.window_height - this.wall_size,
-        0.1 * this.window_width - this.wall_size, 0.5 * this.window_height - this.wall_size,
-        0.1 * this.window_width - this.wall_size, 0.9 * this.window_height + this.wall_size,
-        0.5 * this.window_width - this.door_size / 2, 0.9 * this.window_height + this.wall_size
+        0.5 * this.window_width - this.door_size / 2, this.constraints.top - this.wall_size,
+        this.constraints.left - this.wall_size, this.constraints.top - this.wall_size,
+        this.constraints.left - this.wall_size, this.constraints.bottom + this.wall_size,
+        0.5 * this.window_width - this.door_size / 2, this.constraints.bottom + this.wall_size
       ],
       right: [
-        0.5 * this.window_width + this.door_size / 2, 0.1 * this.window_height - this.wall_size,
-        0.9 * this.window_width + this.wall_size, 0.1 * this.window_height - this.wall_size,
-        0.9 * this.window_width + this.wall_size, 0.9 * this.window_height + this.wall_size,
-        0.5 * this.window_width + this.door_size / 2, 0.9 * this.window_height + this.wall_size
+        0.5 * this.window_width + this.door_size / 2, this.constraints.top - this.wall_size,
+        this.constraints.right + this.wall_size, this.constraints.top - this.wall_size,
+        this.constraints.right + this.wall_size, this.constraints.bottom + this.wall_size,
+        0.5 * this.window_width + this.door_size / 2, this.constraints.bottom + this.wall_size
       ]
     }
   };
@@ -59,7 +61,7 @@ export abstract class Room implements IRoom {
   private draw_room() {
     /** Set base */
     love.graphics.setColor(1, 1, 1, 1);
-    love.graphics.setLineWidth(2);
+    love.graphics.setLineWidth(1);
     /** Walls - Inner */
     love.graphics.line(this.points.inner.left as any);
     love.graphics.line(this.points.inner.right as any);

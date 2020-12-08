@@ -5,7 +5,7 @@ import { IRoom } from "../interfaces/room";
 export class Game {
   private readonly window_width : number = 768;
   private readonly window_height : number = 768;
-  private room !: IRoom;
+  public room !: IRoom;
   private player !: Player;
   constructor() { }
   load() {
@@ -26,9 +26,10 @@ export class Game {
     /** Create player and room */
     this.room = new FirstRoom(this.window_width, this.window_height);
     this.player = new Player(
+      this,
       this.window_width / 2,
       this.window_height / 2,
-      'controller'
+      'keyboard'
     );
   }
   update(dt : number) {

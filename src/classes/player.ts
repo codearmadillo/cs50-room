@@ -1,7 +1,8 @@
 import { Joystick } from "love.joystick";
+import { Game } from "../controllers/game-controller";
 
 export class Player {
-  private speed : number = 300;
+  private speed : number = 250;
   private width : number = 48;
   private height : number = 48;
   private _x : number = 0;
@@ -13,6 +14,7 @@ export class Player {
   private readonly controller : Joystick;
   private readonly controller_deadzone : number = 0.25;
   constructor(
+    private readonly game : Game,
     x : number,
     y : number,
     private readonly controls : 'controller' | 'keyboard'
@@ -25,6 +27,17 @@ export class Player {
   update(dt : number) : void {
     /** Increase velocity */
     this.movement();
+    /** X axis */
+    if(this.dx !== 0) {
+      if(this.collides('x')) {
+        this.dx = 0;
+      }
+    }
+    if(this.dy !== 0) {
+      if(this.collides('y')) {
+        this.dy = 0;
+      }
+    }
     /** Update position */
     this._x += this.dx * dt;
     this._y += this.dy * dt;
@@ -33,9 +46,35 @@ export class Player {
     love.graphics.setColor(1, 1, 1, 1);
     love.graphics.rectangle(
       'fill',
-      this.x + this.width / 2, this.y + this.height / 2,
+      this.x, this.y,
       this.width, this.height
     );
+  }
+  /**
+   * Checks collision provided axis
+   * @param axis 
+   */
+  private collides(axis : 'x' | 'y') : boolean {
+    /** Define empty position that will be used for checking */
+    let offset : number = 5;
+    let position : number;
+    /** Assign it */
+    if(axis === 'x') {
+      position = this.dx > 0 ? this.x + this.width + offset : this.x - offset;
+    } else {
+      position = this.dy > 0 ? this.y + this.height + offset : this.y - offset;
+    }
+    /** Check room boundaries */
+    if(axis === 'x') {
+      if(position <= this.game.room.constraints.left || position >= this.game.room.constraints.right) {
+        return true;
+      }
+    } else {
+      if(position <= this.game.room.constraints.top || position >= this.game.room.constraints.bottom) {
+        return true;
+      }
+    }
+    return false;
   }
   private movement() {
     /** Define input */
