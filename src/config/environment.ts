@@ -5,7 +5,7 @@ interface IEnvironment {
   colours : { [key : string] : [number, number, number, number] };
 }
 export const environment : IEnvironment = {
-  showBouncingBoxes: false,
+  showBouncingBoxes: true,
   showInteractionRadius: true,
   showMasks: true,
   colours: {

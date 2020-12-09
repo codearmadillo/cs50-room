@@ -63,7 +63,8 @@ export abstract class GenericRoom implements IRoom {
   public get static_objects() {
     return this._static_objects;
   }
-  constructor(protected readonly window_width : number, protected readonly window_height : number, private readonly player : Player) {
+  public player_y : number = 0;
+  constructor(protected readonly window_width : number, protected readonly window_height : number) {
     /** Add generic static objects */
     /** Top right corner */
     this.add_scene_object(new Armchair(this.constraints.x2 - 115, this.constraints.y1 + 70));
@@ -81,7 +82,6 @@ export abstract class GenericRoom implements IRoom {
   draw() {
     this.draw_room();
     this.draw_doors();
-    this.draw_objects();
   }
   protected add_scene_object(object : StaticObject) {
     /** Push */
@@ -111,19 +111,5 @@ export abstract class GenericRoom implements IRoom {
   }
   private draw_doors() {
 
-  }
-  private draw_objects() {
-    let isPlayerRendered : boolean = false;
-    this.static_objects.forEach((object) => {
-      if(object.y < this.player.y) {
-        object.draw();
-      } else {
-        if(!isPlayerRendered) {
-          this.player.draw();
-          isPlayerRendered = true;
-        }
-        object.draw();
-      }
-    });
   }
 }
