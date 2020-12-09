@@ -44,14 +44,12 @@ export class Game {
     let isPlayerRendered : boolean = false;
     this.room.static_objects.forEach((object) => {
       if(object.y < this.player.y) {
-        environment.showMasks = false;
         object.draw();
       } else {
         if(!isPlayerRendered) {
           this.player.draw();
           isPlayerRendered = true;
         }
-        environment.showMasks = true;
         object.draw();
       }
     });

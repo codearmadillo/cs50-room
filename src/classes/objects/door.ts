@@ -2,8 +2,13 @@ import { environment } from "../../config/environment";
 import { StaticObject } from "../static-object";
 
 export class Door extends StaticObject {
-  public readonly width : number = 52;
-  public readonly height : number = 105;
+  protected readonly scale : number = 1.5;
+  public get width() {
+    return 52 * this.scale;
+  }
+  public get height() {
+    return 105 * this.scale;
+  }
   public get bouncing_box() {
     return {
       x1: this.x - 2,
@@ -45,7 +50,7 @@ export class Door extends StaticObject {
     love.graphics.setColor(color);
   }
   private draw_mask() {
-    this.set_masking_color();
+    love.graphics.setColor(0, 0, 0, .5);
     /** Draw */
     love.graphics.rectangle('fill', this.x, this.y - this.height, this.width, this.height);
   }
