@@ -24,7 +24,7 @@ export class Game {
     );
     love.graphics.setBackgroundColor(0, 0, 0, 1);
     /** Create player and room */
-    this.room = new FirstRoom(this.window_width, this.window_height);
+    this.room = new FirstRoom(this.window_width, this.window_height, this.player);
     this.player = new Player(
       this,
       this.window_width / 2,
@@ -39,7 +39,6 @@ export class Game {
   draw() {
     /** Room and player */
     this.room.draw();
-    this.player.draw();
     /** FPS */
     love.graphics.setColor(0, 1, 0, 1);
     love.graphics.print("FPS: " + tostring(love.timer.getFPS( )), 10, 10)

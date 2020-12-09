@@ -7,6 +7,7 @@ import { Piano } from "../classes/objects/piano";
 import { SmallTable } from "../classes/objects/small-table";
 import { IRoom } from "../interfaces/room";
 import { BouncingBoxConstraints } from "../types/boucing-box";
+import { Player } from "../classes/player";
 
 interface PointDefinitions {
   inner : {
@@ -58,11 +59,11 @@ export abstract class GenericRoom implements IRoom {
       ]
     }
   };
-  private readonly _static_objects : StaticObject[] = [];
+  private _static_objects : StaticObject[] = [];
   public get static_objects() {
     return this._static_objects;
   }
-  constructor(protected readonly window_width : number, protected readonly window_height : number) {
+  constructor(protected readonly window_width : number, protected readonly window_height : number, private readonly player : Player) {
     /** Add generic static objects */
     /** Top right corner */
     this.add_scene_object(new Armchair(this.constraints.x2 - 115, this.constraints.y1 + 70));
@@ -83,7 +84,16 @@ export abstract class GenericRoom implements IRoom {
     this.draw_objects();
   }
   protected add_scene_object(object : StaticObject) {
+    /** Push */
     this._static_objects.push(object);
+    /** Sort */
+    this._static_objects = this._static_objects.sort((a, b) => {
+      if(a.y === b.y) {
+        return 0;
+      } else {
+        return a.y > b.y ? 1 : -1
+      }
+    });
   }
   protected remove_scene_object(index : number) {
     this._static_objects.splice(index, 1);
@@ -103,8 +113,17 @@ export abstract class GenericRoom implements IRoom {
 
   }
   private draw_objects() {
+    let isPlayerRendered : boolean = false;
     this.static_objects.forEach((object) => {
-      object.draw();
+      if(object.y < this.player.y) {
+        object.draw();
+      } else {
+        if(!isPlayerRendered) {
+          this.player.draw();
+          isPlayerRendered = true;
+        }
+        object.draw();
+      }
     });
   }
 }
