@@ -1,9 +1,13 @@
 interface IEnvironment {
-  bouncingBoxes: boolean;
+  showBouncingBoxes: boolean;
+  showInteractionRadius: boolean;
+  showMasks: boolean;
   colours : { [key : string] : [number, number, number, number] };
 }
 export const environment : IEnvironment = {
-  bouncingBoxes: true,
+  showBouncingBoxes: false,
+  showInteractionRadius: true,
+  showMasks: true,
   colours: {
     white: [1, 1, 1, 1],
     gray_1: [235 / 255, 235 / 255, 235 / 255, 1],

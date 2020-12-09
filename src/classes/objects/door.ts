@@ -20,6 +20,9 @@ export class Door extends StaticObject {
   }
   draw() {
     const color = love.graphics.getColor();
+    /** Draw mask */
+    this.draw_mask();
+    /** Set color */
     love.graphics.setColor(1, 1, 1, 1);
     /** Board */
     love.graphics.line(
@@ -35,10 +38,15 @@ export class Door extends StaticObject {
     /** Handle */
     love.graphics.line(this.x + this.width - 10, this.y - this.height / 2, this.x + this.width - 5, this.y - this.height / 2);
     /** Bouncing box */
-    if(environment.bouncingBoxes) {
+    if(environment.showBouncingBoxes) {
       this.draw_bouncing_box();
     }
     /** Reset */
     love.graphics.setColor(color);
+  }
+  private draw_mask() {
+    this.set_masking_color();
+    /** Draw */
+    love.graphics.rectangle('fill', this.x, this.y - this.height, this.width, this.height);
   }
 }

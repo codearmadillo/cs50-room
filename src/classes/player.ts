@@ -53,7 +53,7 @@ export class Player extends StaticObject {
       this.x, this.y,
       this.width, this.height
     );
-    if(environment.bouncingBoxes) {
+    if(environment.showBouncingBoxes) {
       this.draw_bouncing_box([1, 0, 0, .5]);
     }
   }

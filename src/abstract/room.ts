@@ -64,11 +64,15 @@ export abstract class GenericRoom implements IRoom {
   }
   constructor(protected readonly window_width : number, protected readonly window_height : number) {
     /** Add generic static objects */
-    this.add_scene_object(new Armchair(this.constraints.x2 - 150, this.constraints.y1 + 150));
-    this.add_scene_object(new SmallTable(this.constraints.x2 - 300, this.constraints.y1 + 100));
-    this.add_scene_object(new Piano(this.constraints.x1 + 10, this.constraints.y1 + 100));
-    this.add_scene_object(new Couch(this.constraints.x1 + 20, this.constraints.y2 - 70));
-    // this.add_scene_object(new Fireplace(this.constraints.x1 + 105, this.constraints.y2 - 15));
+    /** Top right corner */
+    this.add_scene_object(new Armchair(this.constraints.x2 - 115, this.constraints.y1 + 70));
+    this.add_scene_object(new SmallTable(this.constraints.x2 - 155, this.constraints.y1 + 60));
+    /** Left side */
+    this.add_scene_object(new Piano(this.constraints.x1 + 10, this.constraints.y1 + 75));
+    /** Bottom */
+    this.add_scene_object(new Couch(this.constraints.x1 + 20, this.constraints.y2 - 135));
+    this.add_scene_object(new Fireplace(this.constraints.x1 + 105, this.constraints.y2 - 15));
+    /** Doors */
     this.add_scene_object(new Door(this.constraints.x1 + 50, this.constraints.y1));
     this.add_scene_object(new Door(this.constraints.x2 - 100, this.constraints.y2));
   }
@@ -85,8 +89,6 @@ export abstract class GenericRoom implements IRoom {
     this._static_objects.splice(index, 1);
   }
   private draw_room() {
-
-
     love.graphics.setColor(1, 1, 1, 1);
     love.graphics.setLineWidth(1);
     love.graphics.line(
@@ -95,32 +97,7 @@ export abstract class GenericRoom implements IRoom {
       this.constraints.x2, this.constraints.y2,
       this.constraints.x1, this.constraints.y2,
       this.constraints.x1, this.constraints.y1,
-    )
-    return;
-
-    /** Set base */
-    love.graphics.setColor(1, 1, 1, 1);
-    love.graphics.setLineWidth(1);
-    /** Walls - Inner */
-    love.graphics.line(this.points.inner.left as any);
-    love.graphics.line(this.points.inner.right as any);
-    /** Walls - Outer */
-    love.graphics.line(this.points.outer.left as any);
-    love.graphics.line(this.points.outer.right as any);
-    /** Corners */
-    (['left', 'right'] as ['left', 'right']).forEach((side : 'left' | 'right') => {
-      for(let i = 0; i < this.points.inner.left.length - 1; i += 2) {
-        if(this.points.inner[side][i + 1] === undefined) {
-          return;
-        }
-        love.graphics.line(
-          this.points.inner[side][i],
-          this.points.inner[side][i + 1],
-          this.points.outer[side][i],
-          this.points.outer[side][i + 1],
-        );
-      }
-    });
+    );
   }
   private draw_doors() {
 

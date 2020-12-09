@@ -22,13 +22,16 @@ export class Fireplace extends StaticObject {
   }
   draw() {
     const color = love.graphics.getColor();
+    /** Draw mask */
+    this.draw_mask();
+    /** Set color */
     love.graphics.setColor(1, 1, 1, 1);
     /** Top board */
     this.draw_base();
     this.draw_fireplace();
     this.draw_top_board();
     /** Bouncing box */
-    if(environment.bouncingBoxes) {
+    if(environment.showBouncingBoxes) {
       this.draw_bouncing_box();
     }
     /** Reset */
@@ -38,7 +41,7 @@ export class Fireplace extends StaticObject {
     const height = 35;
     const thickness = 7;
     /** Mask */
-    love.graphics.setColor(0, 0, 0, 1);
+    this.set_masking_color();
     love.graphics.polygon(
       'fill',
       this.x - 5, this.y - this.height - height,
@@ -78,7 +81,7 @@ export class Fireplace extends StaticObject {
       this.x - 10,
       this.y - this.base_height - thickness - 4,
       this.width + 20, this.base_height + 26
-    )
+    );
   }
   private draw_fireplace() {
     const base_thickness = 11;
@@ -86,7 +89,7 @@ export class Fireplace extends StaticObject {
     /** Pillars */
     (['fill', 'line'] as DrawMode[]).forEach((mode) => {
       if(mode === 'fill') {
-        love.graphics.setColor(0, 0, 0, 1);
+        this.set_masking_color();
       } else {
         love.graphics.setColor(1, 1, 1, 1);
       }
@@ -125,5 +128,30 @@ export class Fireplace extends StaticObject {
     render_log(this.x + this.width / 2 - 28, this.y - base_thickness - 8 - 28, 56, 16);
     render_log(this.x + this.width / 2 - 21, this.y - base_thickness - 8 - 28, 42, 12);
     render_log(this.x + this.width / 2 - 25, this.y - base_thickness - 8 - 16, 48, 16);
+  }
+  private draw_mask() {
+    this.set_masking_color();
+    /** Base */
+    const base_thickness = 11;
+    love.graphics.rectangle(
+      'fill',
+      this.x, this.y - this.base_height - base_thickness,
+      this.width, this.base_height
+    );
+    love.graphics.polygon(
+      'fill',
+      this.x, this.y - base_thickness,
+      this.x, this.y,
+      this.x + this.width, this.y,
+      this.x + this.width, this.y - base_thickness,
+    );
+    love.graphics.rectangle(
+      'fill',
+      this.x - 10,
+      this.y - this.base_height - base_thickness - 4,
+      this.width + 20, this.base_height + 26
+    );
+    /** Fireplace */
+
   }
 }

@@ -22,6 +22,9 @@ export class Piano extends StaticObject {
   }
   draw() {
     const color = love.graphics.getColor();
+    /** Draw mask */
+    this.draw_mask();
+    /** Set color */
     love.graphics.setColor(1, 1, 1, 1);
     /** Keys */
     this.render_keys();
@@ -30,7 +33,7 @@ export class Piano extends StaticObject {
     /** Bottom board - Stand */
     this.render_stand();
     /** Bouncing box */
-    if(environment.bouncingBoxes) {
+    if(environment.showBouncingBoxes) {
       this.draw_bouncing_box();
     }
     /** Reset */
@@ -70,7 +73,7 @@ export class Piano extends StaticObject {
   }
   private render_top() {
     /** Render mask */
-    love.graphics.setColor(0, 0, 0, 1);
+    this.set_masking_color();
     love.graphics.rectangle('fill', this.x, this.y, this.width, this.height + this.thickness);
     love.graphics.setColor(1, 1, 1, 1);
     love.graphics.rectangle('line', this.x, this.y, this.width, this.height);
@@ -79,6 +82,17 @@ export class Piano extends StaticObject {
       this.x, this.y + this.height + this.thickness,
       this.x + this.width, this.y + this.height + this.thickness,
       this.x + this.width, this.y + this.height
+    );
+  }
+  private draw_mask() {
+    this.set_masking_color();
+    /** Draw */
+    love.graphics.rectangle('fill', this.x, this.y, this.width, this.height + this.thickness);
+    love.graphics.rectangle('fill', this.x, this.y + this.height + this.thickness, this.width * 0.7, this.z);
+    love.graphics.rectangle(
+      'fill',
+      this.x + this.width * 0.7, this.y + this.height + (this.thickness * 2) + this.z * 0.25,
+      this.width / 2, -this.height - this.thickness
     );
   }
 }

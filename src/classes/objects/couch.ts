@@ -16,13 +16,16 @@ export class Couch extends SharedArmatureObject {
   }
   draw() {
     const color = love.graphics.getColor();
+    /** Draw mask */
+    this.draw_mask();
+    /** Set color */
     love.graphics.setColor(1, 1, 1, 1);
     /** Board */
     this.draw_arms();
     this.draw_base();
     this.draw_back();
     /** Bouncing box */
-    if(environment.bouncingBoxes) {
+    if(environment.showBouncingBoxes) {
       this.draw_bouncing_box();
     }
     /** Reset */

@@ -13,6 +13,10 @@ export class SmallTable extends StaticObject {
       y2: this.y + this.height + this.width * 0.20
     }
   }
+  get stand_width() { return this.width * 0.8; }
+  get stand_height() { return this.stand_width * 0.3; }
+  get stand_xdiff() { return (this.width - this.stand_width) / 2; }
+  get stand_thickness() { return 4; }
   constructor(
     protected _x : number,
     protected _y : number
@@ -21,47 +25,53 @@ export class SmallTable extends StaticObject {
   }
   draw() {
     const color = love.graphics.getColor();
+    /** Draw mask */
+    this.draw_mask();
+    /** Set color */
     love.graphics.setColor(1, 1, 1, 1);
     /** Render */
     this.draw_stand();
     this.draw_leg();
     this.draw_board();
     /** Bouncing box */
-    if(environment.bouncingBoxes) {
+    if(environment.showBouncingBoxes) {
       this.draw_bouncing_box();
     }
     /** Reset */
     love.graphics.setColor(color);
   }
-  private draw_stand() {
-    const width = this.width * 0.8;
-    const height = width * 0.3;
-    const xdiff = (this.width - width) / 2;
-    const thickness = 4;
-    love.graphics.line(
-      this.x + xdiff, this.y + this.height,
-      this.x + this.width / 2, this.y + this.height - height,
-      this.x + this.width - xdiff, this.y + this.height,
-      this.x + this.width / 2, this.y + this.height + height,
-      this.x + xdiff, this.y + this.height,
-    );
-    love.graphics.line(
-      this.x + xdiff, this.y + this.height,
-      this.x + xdiff, this.y + this.height + thickness,
-      this.x + this.width / 2, this.y + this.height + height + thickness,
-      this.x + this.width - xdiff, this.y + this.height + thickness,
-      this.x + this.width - xdiff, this.y + this.height
-    );
-    love.graphics.line(
-      this.x + this.width / 2, this.y + this.height + height,
-      this.x + this.width / 2, this.y + this.height + height + thickness
-    );
+  private draw_stand(mask : boolean = false) {
+    let outlines1 = [
+      this.x + this.stand_xdiff, this.y + this.height,
+      this.x + this.width / 2, this.y + this.height - this.stand_height,
+      this.x + this.width - this.stand_xdiff, this.y + this.height,
+      this.x + this.width / 2, this.y + this.height + this.stand_height,
+      this.x + this.stand_xdiff, this.y + this.height,
+    ];
+    let outlines2 = [
+      this.x + this.stand_xdiff, this.y + this.height,
+      this.x + this.stand_xdiff, this.y + this.height + this.stand_thickness,
+      this.x + this.width / 2, this.y + this.height + this.stand_height + this.stand_thickness,
+      this.x + this.width - this.stand_xdiff, this.y + this.height + this.stand_thickness,
+      this.x + this.width - this.stand_xdiff, this.y + this.height
+    ];
+    if(!mask) {
+      love.graphics.line(outlines1 as any);
+      love.graphics.line(outlines2 as any);
+      love.graphics.line(
+        this.x + this.width / 2, this.y + this.height + this.stand_height,
+        this.x + this.width / 2, this.y + this.height + this.stand_height + this.stand_thickness
+      );
+    } else {
+      love.graphics.polygon('fill', outlines1 as any);
+      love.graphics.polygon('fill', outlines2 as any);
+    }
   }
   private draw_leg() {
     const base_width = this.width * 0.8;
     const base_height = base_width * 0.3;
     /** Mask */
-    love.graphics.setColor(0, 0, 0, 1);
+    this.set_masking_color();
     love.graphics.polygon(
       'fill',
       this.x + this.width / 2 - 4, this.y,
@@ -87,12 +97,17 @@ export class SmallTable extends StaticObject {
     const width = this.width * 0.8;
     const height = width * 0.6;
     /** Mask */
-    love.graphics.setColor(0, 0, 0, 1);
+    this.set_masking_color();
     love.graphics.ellipse(
       'fill', this.x + this.width / 2, this.y, width, height);
     /** Render */
     love.graphics.setColor(1, 1, 1, 1);
     love.graphics.ellipse(
       'line', this.x + this.width / 2, this.y, width, height);
+  }
+  private draw_mask() {
+    this.set_masking_color();
+    /** Draw */
+    this.draw_stand(true);
   }
 }

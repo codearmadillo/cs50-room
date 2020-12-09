@@ -12,6 +12,11 @@ export abstract class SharedArmatureObject extends StaticObject {
       y2: this.y - this.height * 0.45
     }
   }
+  get pillow_area() { return this.width - (this.arm_width * 2); }
+  get pillow_width() { return math.floor(this.pillow_area / this.pillow_count); }
+  get pillow_height() { return this.height / 3 * 0.4; }
+  get pillow_spacing() { return 4; }
+  get pillow_thickness() { return math.max(8, math.min(13, this.pillow_height * 0.6)); }
   protected abstract readonly arm_width : number;
   protected draw_arms() {
     // love.graphics.arc('fill', 'open', this.x, this.y, 100, 0, -math.pi)
@@ -24,8 +29,6 @@ export abstract class SharedArmatureObject extends StaticObject {
         this.x + i * (this.width - this.arm_width) + this.arm_width, this.y - this.height / 3
       );
       love.graphics.arc('line', 'open', this.x + i * (this.width - this.arm_width) + this.arm_width / 2, this.y - this.height / 3, this.arm_width / 2, 0, -math.pi);
-      /** Mask */
-
       /** Back */
       love.graphics.arc(
         'line', 'open',
@@ -43,33 +46,26 @@ export abstract class SharedArmatureObject extends StaticObject {
   protected draw_base() {
     /** Base */
     love.graphics.line(this.x + this.arm_width, this.y, this.x + (this.width - this.arm_width), this.y);
-    /** Pillows */
-    const pillow_area = this.width - (this.arm_width * 2);
-    const pillow_width = math.floor(pillow_area / this.pillow_count);
-    const pillow_height = this.height / 3 * 0.4;
-    const pillow_spacing = 4;
-    const pillow_thickness = math.max(8, math.min(13, pillow_height * 0.6));
     for(let i = 0; i < this.pillow_count; ++i) {
-      let x = this.x + this.arm_width + (pillow_spacing / 2) + (i * pillow_width - pillow_spacing / 2);
+      let x = this.x + this.arm_width + (this.pillow_spacing / 2) + (i * this.pillow_width - this.pillow_spacing / 2);
       let y = this.y - this.height / 3 * 0.85;
       love.graphics.rectangle(
         'line',
         x, y,
-        pillow_width - pillow_spacing / 2, pillow_height
+        this.pillow_width - this.pillow_spacing / 2, this.pillow_height
       );
       love.graphics.line(
-        x, y + pillow_height,
-        x + pillow_width - pillow_spacing / 2, y + pillow_height,
-        x + pillow_width - pillow_spacing / 2, y + pillow_thickness + pillow_height,
-        x, y + pillow_thickness + pillow_height,
-        x, y + pillow_height
+        x, y + this.pillow_height,
+        x + this.pillow_width - this.pillow_spacing / 2, y + this.pillow_height,
+        x + this.pillow_width - this.pillow_spacing / 2, y + this.pillow_thickness + this.pillow_height,
+        x, y + this.pillow_thickness + this.pillow_height,
+        x, y + this.pillow_height
       )
     }
   }
   protected draw_back() {
     const draw_arc_base = (y_offset : number) => {
-      const pillow_height = this.height / 3 * 0.85;
-      const base_y = this.y - pillow_height + y_offset;
+      const base_y = this.y - this.pillow_height + y_offset;
       const height = this.height * 0.25;
       /** Left */
       love.graphics.line(this.x + this.arm_width + 2, base_y - height, this.x + this.arm_width + 2, base_y);
@@ -95,5 +91,17 @@ export abstract class SharedArmatureObject extends StaticObject {
     }
     draw_arc_base(-12);
     draw_arc_base(0);
+  }
+  protected draw_mask() {
+    this.set_masking_color();
+    const back_height = this.height * 0.25;
+    const back_base_y = this.y - this.pillow_height;
+    /** Sides and base */
+    love.graphics.rectangle('fill', this.x, this.y, this.width, - (this.height / 2));
+    for(let i = 0; i < 2; ++i) {
+      love.graphics.arc('fill', 'closed', this.x + this.arm_width / 2 + (i * (this.width - this.arm_width)), this.y - (this.height / 2), this.arm_width / 2, -math.pi, 0);
+    }
+    /** Top */
+    love.graphics.rectangle('fill', this.x + this.arm_width, this.y, this.width - this.arm_width * 2, -this.height * 0.59);
   }
 }
