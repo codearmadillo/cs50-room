@@ -3,7 +3,7 @@ interface IEnvironment {
   colours : { [key : string] : [number, number, number, number] };
 }
 export const environment : IEnvironment = {
-  bouncingBoxes: false,
+  bouncingBoxes: true,
   colours: {
     white: [1, 1, 1, 1],
     gray_1: [235 / 255, 235 / 255, 235 / 255, 1],

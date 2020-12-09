@@ -4,6 +4,14 @@ export abstract class SharedArmatureObject extends GameObject {
   public abstract readonly width : number;
   public abstract readonly height : number;
   public abstract readonly pillow_count : number;
+  public get bouncing_box() {
+    return {
+      x1: this.x - 2,
+      y1: this.y + 5,
+      x2: this.x + this.width + 2,
+      y2: this.y - this.height * 0.45
+    }
+  }
   protected abstract readonly arm_width : number;
   protected draw_arms() {
     // love.graphics.arc('fill', 'open', this.x, this.y, 100, 0, -math.pi)
