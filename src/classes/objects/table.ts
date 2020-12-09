@@ -1,7 +1,7 @@
 import { environment } from "../../config/environment";
-import { GameObject } from "../game-object";
+import { StaticObject } from "../static-object";
 
-export class Table extends GameObject {
+export class Table extends StaticObject {
   private readonly leg_size = 10;
   private readonly leg_length = 10;
   private readonly leg_offset = 15;

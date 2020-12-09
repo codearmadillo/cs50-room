@@ -1,7 +1,7 @@
 import { environment } from "../../config/environment";
-import { GameObject } from "../game-object";
+import { StaticObject } from "../static-object";
 
-export class SmallTable extends GameObject {
+export class SmallTable extends StaticObject {
   public readonly width : number = 35;
   public readonly height : number = 35;
   private readonly thickness : number = 6;

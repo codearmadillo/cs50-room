@@ -1,9 +1,9 @@
 import { Joystick } from "love.joystick";
 import { environment } from "../config/environment";
 import { Game } from "../controllers/game-controller";
-import { GameObject } from "./game-object";
+import { StaticObject } from "./static-object";
 
-export class Player extends GameObject {
+export class Player extends StaticObject {
   /** Size */
   readonly width : number = 48;
   readonly height : number = 48;

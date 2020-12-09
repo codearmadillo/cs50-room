@@ -1,8 +1,8 @@
 import { DrawMode } from "love.graphics";
 import { environment } from "../../config/environment";
-import { GameObject } from "../game-object";
+import { StaticObject } from "../static-object";
 
-export class Fireplace extends GameObject {
+export class Fireplace extends StaticObject {
   public readonly width : number = 125;
   private readonly base_height = 35;
   public readonly height : number = 85;

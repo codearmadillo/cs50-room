@@ -1,5 +1,5 @@
 import { environment } from "../../config/environment";
-import { GameObject } from "../game-object";
+import { StaticObject } from "../static-object";
 import { SharedArmatureObject } from "./shared";
 
 export class Armchair extends SharedArmatureObject {

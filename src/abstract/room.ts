@@ -1,4 +1,4 @@
-import { GameObject } from "../classes/game-object";
+import { StaticObject } from "../classes/static-object";
 import { Armchair } from "../classes/objects/armchair";
 import { Couch } from "../classes/objects/couch";
 import { Door } from "../classes/objects/door";
@@ -58,7 +58,7 @@ export abstract class GenericRoom implements IRoom {
       ]
     }
   };
-  private readonly _static_objects : GameObject[] = [];
+  private readonly _static_objects : StaticObject[] = [];
   public get static_objects() {
     return this._static_objects;
   }
@@ -78,7 +78,7 @@ export abstract class GenericRoom implements IRoom {
     this.draw_doors();
     this.draw_objects();
   }
-  protected add_scene_object(object : GameObject) {
+  protected add_scene_object(object : StaticObject) {
     this._static_objects.push(object);
   }
   protected remove_scene_object(index : number) {

@@ -1,6 +1,6 @@
-import { GameObject } from "../game-object";
+import { StaticObject } from "../static-object";
 
-export abstract class SharedArmatureObject extends GameObject {
+export abstract class SharedArmatureObject extends StaticObject {
   public abstract readonly width : number;
   public abstract readonly height : number;
   public abstract readonly pillow_count : number;

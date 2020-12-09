@@ -1,7 +1,7 @@
 import { environment } from "../../config/environment";
-import { GameObject } from "../game-object";
+import { StaticObject } from "../static-object";
 
-export class Piano extends GameObject {
+export class Piano extends StaticObject {
   private readonly thickness : number = 7;
   private readonly z : number = 60;
   public readonly width : number = 43;

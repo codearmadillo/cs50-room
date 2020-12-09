@@ -1,7 +1,7 @@
 import { environment } from "../../config/environment";
-import { GameObject } from "../game-object";
+import { StaticObject } from "../static-object";
 
-export class Door extends GameObject {
+export class Door extends StaticObject {
   public readonly width : number = 52;
   public readonly height : number = 105;
   public get bouncing_box() {
