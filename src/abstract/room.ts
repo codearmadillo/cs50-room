@@ -64,11 +64,11 @@ export abstract class GenericRoom implements IRoom {
   }
   constructor(protected readonly window_width : number, protected readonly window_height : number) {
     /** Add generic static objects */
-    this.add_scene_object(new Armchair(this.constraints.x2 - 200, this.constraints.y1 + 100));
+    this.add_scene_object(new Armchair(this.constraints.x2 - 150, this.constraints.y1 + 150));
     this.add_scene_object(new SmallTable(this.constraints.x2 - 300, this.constraints.y1 + 100));
     this.add_scene_object(new Piano(this.constraints.x1 + 10, this.constraints.y1 + 100));
-    this.add_scene_object(new Couch(this.constraints.x1 + 175, this.constraints.y2 - 300));
-    this.add_scene_object(new Fireplace(this.constraints.x1 + 105, this.constraints.y2 - 15));
+    this.add_scene_object(new Couch(this.constraints.x1 + 20, this.constraints.y2 - 70));
+    // this.add_scene_object(new Fireplace(this.constraints.x1 + 105, this.constraints.y2 - 15));
     this.add_scene_object(new Door(this.constraints.x1 + 50, this.constraints.y1));
     this.add_scene_object(new Door(this.constraints.x2 - 100, this.constraints.y2));
   }
