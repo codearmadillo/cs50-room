@@ -42,7 +42,7 @@ export class Game {
     this.room.draw();
     /** Render objects and player */
     let isPlayerRendered : boolean = false;
-    this.room.static_objects.forEach((object) => {
+    this.room.game_objects.forEach((object) => {
       if(object.y < this.player.y) {
         object.draw();
       } else {

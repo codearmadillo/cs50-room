@@ -9,6 +9,8 @@ import { IRoom } from "../interfaces/room";
 import { BouncingBoxConstraints } from "../types/boucing-box";
 import { Player } from "../classes/player";
 import { environment } from "../config/environment";
+import { InteractiveObject } from "../classes/interactive_object";
+import { GameObject } from "../classes/game-object";
 
 interface PointDefinitions {
   inner : {
@@ -60,9 +62,9 @@ export abstract class GenericRoom implements IRoom {
       ]
     }
   };
-  private _static_objects : StaticObject[] = [];
-  public get static_objects() {
-    return this._static_objects;
+  private _game_objects : GameObject[] = [];
+  public get game_objects() {
+    return this._game_objects;
   }
   public player_y : number = 0;
   constructor(protected readonly window_width : number, protected readonly window_height : number) {
@@ -91,20 +93,17 @@ export abstract class GenericRoom implements IRoom {
     this.draw_carper();
     this.draw_room_outline();
   }
-  protected add_scene_object(object : StaticObject) {
+  protected add_scene_object(object : GameObject) {
     /** Push */
-    this._static_objects.push(object);
+    this._game_objects.push(object);
     /** Sort */
-    this._static_objects = this._static_objects.sort((a, b) => {
+    this._game_objects = this._game_objects.sort((a, b) => {
       if(a.y === b.y) {
         return 0;
       } else {
         return a.y > b.y ? 1 : -1
       }
     });
-  }
-  protected remove_scene_object(index : number) {
-    this._static_objects.splice(index, 1);
   }
   private draw_room_outline() {
     love.graphics.setColor(1, 1, 1, 1);

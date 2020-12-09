@@ -6,7 +6,7 @@ interface IEnvironment {
 }
 export const environment : IEnvironment = {
   showBouncingBoxes: false,
-  showInteractionRadius: false,
+  showInteractionRadius: true,
   showMasks: false,
   colours: {
     white: [1, 1, 1, 1],

@@ -1,7 +1,8 @@
 import { environment } from "../../config/environment";
+import { InteractiveObject } from "../interactive_object";
 import { StaticObject } from "../static-object";
 
-export class Door extends StaticObject {
+export class Door extends InteractiveObject {
   protected readonly scale : number = 1.5;
   public get width() {
     return 52 * this.scale;
@@ -45,6 +46,9 @@ export class Door extends StaticObject {
     /** Bouncing box */
     if(environment.showBouncingBoxes) {
       this.draw_bouncing_box();
+    }
+    if(environment.showInteractionRadius) {
+      this.draw_interaction_box();
     }
     /** Reset */
     love.graphics.setColor(color);
