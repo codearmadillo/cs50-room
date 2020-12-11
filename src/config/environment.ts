@@ -1,12 +1,15 @@
+import { Font } from "love.graphics";
+
 interface IEnvironment {
   showBouncingBoxes: boolean;
   showInteractionRadius: boolean;
   showMasks: boolean;
   colours : { [key : string] : [number, number, number, number] };
+  fonts : { [key : string] : Font };
 }
 export const environment : IEnvironment = {
-  showBouncingBoxes: false,
-  showInteractionRadius: true,
+  showBouncingBoxes: true,
+  showInteractionRadius: false,
   showMasks: false,
   colours: {
     white: [1, 1, 1, 1],
@@ -16,5 +19,6 @@ export const environment : IEnvironment = {
     floor: [45 / 255, 45 / 255, 45 / 255, 1],
     carpet: [10 / 255, 10 / 255, 10 / 255, 1],
     carpet_motive: [35 / 255, 35 / 255, 35 / 255, 1]
-  }
+  },
+  fonts: { }
 }

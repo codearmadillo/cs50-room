@@ -1,5 +1,7 @@
+import { InteractiveObject } from "../classes/interactive_object";
 import { Player } from "../classes/player";
 import { FirstRoom } from "../classes/rooms/first";
+import { StaticObject } from "../classes/static-object";
 import { environment } from "../config/environment";
 import { IRoom } from "../interfaces/room";
 
@@ -10,8 +12,6 @@ export class Game {
   private player !: Player;
   constructor() { }
   load() {
-    /** Set window */
-    love.graphics.setDefaultFilter('nearest', 'nearest');
     love.window.setMode(
       this.window_width,
       this.window_height,
@@ -43,7 +43,7 @@ export class Game {
     /** Render objects and player */
     let isPlayerRendered : boolean = false;
     this.room.game_objects.forEach((object) => {
-      if(object.y < this.player.y) {
+      if(object.mask_threshold < this.player.y) {
         object.draw();
       } else {
         if(!isPlayerRendered) {
@@ -52,6 +52,21 @@ export class Game {
         }
         object.draw();
       }
+    });
+
+    /** Collision detection */
+    this.room.game_objects.filter((object) => object instanceof StaticObject).forEach((object) => {
+      if(this.player.collides_with(object)) {
+        love.graphics.setColor(1, 1, 0, 1);
+        love.graphics.rectangle('fill', 25, 25, 5, 5);
+      }
+    });
+
+    /** Light pass */
+    // this.room.draw_lightmask();
+    /** Draw action for interactive objects */
+    this.room.game_objects.filter((object) => object instanceof InteractiveObject).forEach((object) => {
+      // (object as InteractiveObject).draw_action_if_available(this.player);
     });
     /** FPS */
     love.graphics.setColor(0, 1, 0, 1);

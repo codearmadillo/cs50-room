@@ -13,6 +13,7 @@ export class SmallTable extends StaticObject {
       y2: this.y + this.height + this.width * 0.20
     }
   }
+  get mask_threshold() { return this.y + this.height; }
   get stand_width() { return this.width * 0.8; }
   get stand_height() { return this.stand_width * 0.3; }
   get stand_xdiff() { return (this.width - this.stand_width) / 2; }

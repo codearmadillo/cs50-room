@@ -11,6 +11,7 @@ import { Player } from "../classes/player";
 import { environment } from "../config/environment";
 import { InteractiveObject } from "../classes/interactive_object";
 import { GameObject } from "../classes/game-object";
+import { LightSource } from "../classes/lightsource";
 
 interface PointDefinitions {
   inner : {
@@ -30,6 +31,7 @@ export abstract class GenericRoom implements IRoom {
     x1 : 0.2 * this.window_width,
     x2 : 0.8 * this.window_width
   }
+  protected abstract readonly daytime : boolean;
   protected readonly wall_size : number = 45;
   protected readonly door_size : number = 90;
   protected readonly points : PointDefinitions = {
@@ -62,10 +64,12 @@ export abstract class GenericRoom implements IRoom {
       ]
     }
   };
+  protected abstract readonly sun_direction : number;
   private _game_objects : GameObject[] = [];
   public get game_objects() {
     return this._game_objects;
   }
+  private light_sources : { [key: string] : LightSource } = { };
   public player_y : number = 0;
   constructor(protected readonly window_width : number, protected readonly window_height : number) {
     /** Add generic static objects */
@@ -92,6 +96,18 @@ export abstract class GenericRoom implements IRoom {
     this.draw_floor();
     this.draw_carper();
     this.draw_room_outline();
+    this.draw_object_shadows();
+  }
+  draw_lightmask() {
+    if(this.daytime) {
+      return;
+    }
+    for(let y = 0; y < this.window_width; ++y) {
+      for(let x = 0; x < this.window_height; ++x) {
+        love.graphics.setColor(0, 0, 0, 0.85);
+        love.graphics.points(x, y);
+      }
+    }
   }
   protected add_scene_object(object : GameObject) {
     /** Push */
@@ -104,6 +120,12 @@ export abstract class GenericRoom implements IRoom {
         return a.y > b.y ? 1 : -1
       }
     });
+  }
+  protected add_scene_lightsource(name: string, light: LightSource) {
+    this.light_sources[name] = light;
+  }
+  private draw_object_shadows() {
+
   }
   private draw_room_outline() {
     love.graphics.setColor(1, 1, 1, 1);

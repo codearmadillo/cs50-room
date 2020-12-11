@@ -6,5 +6,6 @@ export interface IRoom {
   constraints : BouncingBoxConstraints;
   update(dt : number) : void;
   draw() : void;
+  draw_lightmask() : void;
   readonly game_objects : GameObject[];
 }

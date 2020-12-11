@@ -1,6 +1,7 @@
 import { Joystick } from "love.joystick";
 import { environment } from "../config/environment";
 import { Game } from "../controllers/game-controller";
+import { GameObject } from "./game-object";
 import { StaticObject } from "./static-object";
 
 export class Player extends StaticObject {
@@ -31,17 +32,6 @@ export class Player extends StaticObject {
   update(dt : number) : void {
     /** Increase velocity */
     this.movement();
-    /** X axis */
-    if(this.dx !== 0) {
-      if(this.check_collisions('x')) {
-        this.dx = 0;
-      }
-    }
-    if(this.dy !== 0) {
-      if(this.check_collisions('y')) {
-        this.dy = 0;
-      }
-    }
     /** Update position */
     this._x += this.dx * dt;
     this._y += this.dy * dt;
@@ -57,31 +47,15 @@ export class Player extends StaticObject {
       this.draw_bouncing_box([1, 0, 0, .5]);
     }
   }
-  /**
-   * Checks collision provided axis
-   * @param axis 
-   */
-  private check_collisions(axis : 'x' | 'y') : boolean {
-    /** Define empty position that will be used for checking */
-    let offset : number = 5;
-    let position : number;
-    /** Assign it */
-    if(axis === 'x') {
-      position = this.dx > 0 ? this.x + this.width + offset : this.x - offset;
-    } else {
-      position = this.dy > 0 ? this.y + this.height + offset : this.y - offset;
+  collides_with(object : GameObject) : boolean {
+    if(
+      this.bouncing_box.x1 < object.bouncing_box.x2 &&
+      this.bouncing_box.x2 > object.bouncing_box.x1 &&
+      this.bouncing_box.y1 < object.bouncing_box.y2 &&
+      this.bouncing_box.y2 > object.bouncing_box.y1
+    ) {
+      return true;
     }
-    /** Check room boundaries */
-    if(axis === 'x') {
-      if(position <= this.game.room.constraints.x1 || position >= this.game.room.constraints.x2) {
-        return true;
-      }
-    } else {
-      if(position <= this.game.room.constraints.y1 || position >= this.game.room.constraints.y2) {
-        return true;
-      }
-    }
-    /** False if no collision detected */
     return false;
   }
   private movement() {

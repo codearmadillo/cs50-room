@@ -7,9 +7,9 @@ export abstract class SharedArmatureObject extends StaticObject {
   public get bouncing_box() {
     return {
       x1: this.x - 2,
-      y1: this.y + 5,
+      y1: this.y - this.height * 0.45,
       x2: this.x + this.width + 2,
-      y2: this.y - this.height * 0.45
+      y2: this.y + 5
     }
   }
   get pillow_area() { return this.width - (this.arm_width * 2); }

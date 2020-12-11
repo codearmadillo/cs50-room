@@ -14,6 +14,9 @@ export class Piano extends StaticObject {
       y2: this.y + this.height + this.z + this.thickness + 3
     }
   }
+  public get mask_threshold() {
+    return this.bouncing_box.y2 - 3;
+  }
   constructor(
     protected _x : number,
     protected _y : number

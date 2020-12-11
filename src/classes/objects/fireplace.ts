@@ -9,9 +9,9 @@ export class Fireplace extends StaticObject {
   public get bouncing_box() {
     return {
       x1: this.x - 10,
-      y1: this.y + 15,
+      y1: this.y - this.base_height - 15,
       x2: this.x + this.width + 10,
-      y2: this.y - this.base_height - 15
+      y2: this.y + 15
     }
   }
   constructor(

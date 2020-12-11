@@ -7,6 +7,7 @@ export abstract class GameObject {
   protected _y : number = 0;
   public get x() { return this._x; };
   public get y() { return this._y; };
+  public get mask_threshold() { return this._y; }
   /** Bouncing box */
   public get bouncing_box() : BouncingBoxConstraints {
     return {
