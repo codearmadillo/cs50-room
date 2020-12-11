@@ -27,7 +27,7 @@ export class Game {
     /** Create player and room */
     this.player = new Player(
       this,
-      this.window_width / 2,
+      this.window_width / 2 + 100,
       this.window_height / 2 + 100,
       'keyboard'
     );
@@ -53,15 +53,6 @@ export class Game {
         object.draw();
       }
     });
-
-    /** Collision detection */
-    this.room.game_objects.filter((object) => object instanceof StaticObject).forEach((object) => {
-      if(this.player.collides_with(object)) {
-        love.graphics.setColor(1, 1, 0, 1);
-        love.graphics.rectangle('fill', 25, 25, 5, 5);
-      }
-    });
-
     /** Light pass */
     // this.room.draw_lightmask();
     /** Draw action for interactive objects */

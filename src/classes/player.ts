@@ -1,6 +1,7 @@
 import { Joystick } from "love.joystick";
 import { environment } from "../config/environment";
 import { Game } from "../controllers/game-controller";
+import { BouncingBoxConstraints } from "../types/boucing-box";
 import { GameObject } from "./game-object";
 import { StaticObject } from "./static-object";
 
@@ -32,6 +33,8 @@ export class Player extends StaticObject {
   update(dt : number) : void {
     /** Increase velocity */
     this.movement();
+    /** Check collisions */
+    this.check_collisions_with_static_objects();
     /** Update position */
     this._x += this.dx * dt;
     this._y += this.dy * dt;
@@ -47,12 +50,40 @@ export class Player extends StaticObject {
       this.draw_bouncing_box([1, 0, 0, .5]);
     }
   }
-  collides_with(object : GameObject) : boolean {
+  check_collisions_with_static_objects() {
+    this.game.room.game_objects.filter((object) => object instanceof StaticObject).forEach((object) => {
+      if(this.collides_with(object.bouncing_box)) {
+        const collision = {
+          x: 0,
+          y: 0
+        }
+        /** x - left side */
+        if(this.bouncing_box.x2 - this.width / 2 > object.bouncing_box.x1 && this.dx < 0) {
+          this.dx = 0;
+        }
+        /** x - right side */
+        if(this.bouncing_box.x1 + this.width / 2 < object.bouncing_box.x2 && this.dx > 0) {
+          this.dx = 0;
+        }
+        /** y - top side */
+        if(this.bouncing_box.y2 > object.bouncing_box.y1 && this.dy > 0) {
+          this.dy = 0;
+        }
+        /** y - bottom side */
+        if(this.bouncing_box.y1 < object.bouncing_box.y2 && this.dy < 0) {
+          this.dy = 0;
+        }
+        /** break */
+        return false;
+      }
+    });
+  }
+  private collides_with(constraints : BouncingBoxConstraints) : boolean {
     if(
-      this.bouncing_box.x1 < object.bouncing_box.x2 &&
-      this.bouncing_box.x2 > object.bouncing_box.x1 &&
-      this.bouncing_box.y1 < object.bouncing_box.y2 &&
-      this.bouncing_box.y2 > object.bouncing_box.y1
+      this.bouncing_box.x1 < constraints.x2 &&
+      this.bouncing_box.x2 > constraints.x1 &&
+      this.bouncing_box.y1 < constraints.y2 &&
+      this.bouncing_box.y2 > constraints.y1
     ) {
       return true;
     }
