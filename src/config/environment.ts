@@ -8,7 +8,7 @@ interface IEnvironment {
   fonts : { [key : string] : Font };
 }
 export const environment : IEnvironment = {
-  showBouncingBoxes: true,
+  showBouncingBoxes: false,
   showInteractionRadius: false,
   showMasks: false,
   colours: {

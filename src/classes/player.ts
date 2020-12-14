@@ -1,5 +1,6 @@
 import { data } from "love";
 import { Joystick } from "love.joystick";
+import { isDown } from "love.keyboard";
 import { environment } from "../config/environment";
 import { Game } from "../controllers/game-controller";
 import { BouncingBoxConstraints } from "../types/boucing-box";
@@ -9,10 +10,18 @@ import { Utils } from "./utils";
 
 export class Player extends StaticObject {
   /** Size */
-  readonly width : number = 26;
+  readonly width : number = 32;
   readonly height : number = 48;
+  private readonly head_width = this.width * 0.66;
+  private readonly head_height = this.height * 0.35;
+  private readonly body_width = this.width * 0.8;
+  private readonly body_height = this.height * 0.4;
   /** Movement speed */
-  private speed : number = 250;
+  private speed : number = 200;
+  /** Simple animation */
+  private animation_speed : number = 0.1;
+  private leg_state : -1 | 0 | 1 = -1;
+  private leg_state_n : number = 0;
   /** Velocity */
   public dx : number = 0;
   public dy : number = 0;
@@ -45,20 +54,131 @@ export class Player extends StaticObject {
     /** Update position */
     this._x += this.dx * dt;
     this._y += this.dy * dt;
+    /** Animation */
+    if(this.dx === 0 && this.dy === 0) {
+      this.leg_state = -1;
+      this.leg_state_n = 0;
+    } else {
+      this.leg_state_n += this.animation_speed;
+      if(this.leg_state_n >= 1) {
+        switch(this.leg_state) {
+          case -1:
+            this.leg_state = 0;
+            break;
+          case 0:
+            this.leg_state = 1;
+            break;
+          case 1:
+            this.leg_state = 0;
+            break;
+        }
+        this.leg_state_n = 0;
+      }
+    }
   }
   draw() : void {
-    love.graphics.setColor(1, 1, 1, 1);
-    love.graphics.rectangle(
-      'fill',
-      this.x, this.y,
-      this.width, this.height
-    );
-
-    /** render player */
-
-
+    /** draw body */
+    this.draw_legs();
+    this.draw_body();
+    this.draw_head();
+    /** bbox */
     if(environment.showBouncingBoxes) {
       this.draw_bouncing_box([1, 0, 0, .5]);
+    }
+  }
+  private draw_legs() {
+    const draw_leg = (x : number, id : 0 | 1) => {
+      /** base height */
+      let height = this.height - (this.head_height + this.body_height);
+      /** adjust based on current leg state */
+      if(this.leg_state !== -1 && this.leg_state !== id) {
+        height -= 3;
+      }
+      /** render */
+      love.graphics.setColor(0, 0, 0, 1);
+      love.graphics.rectangle(
+        'fill', x, this.y + this.head_height + this.body_height, 8, height, 2
+      );
+      love.graphics.setColor(1, 1, 1, 1);
+      love.graphics.rectangle(
+        'line', x, this.y + this.head_height + this.body_height, 8, height, 2
+      );
+    }
+    const leg_offset = (this.width - this.body_width) / 2;
+    draw_leg(this.x + leg_offset + 3, 0);
+    draw_leg(this.x + this.width - leg_offset - 3 - 8, 1);
+  }
+  private draw_body() {
+    const draw = (side : 'up' | 'down') => {
+      /** set color */
+      if(side === 'down') {
+        love.graphics.setColor(0.9, 0.9, 0.9, 1);
+      } else {
+        love.graphics.setColor(0.8, 0.8, 0.8, 1);
+      }
+      love.graphics.rectangle(
+        'fill',
+        this.x + (this.width - this.body_width) / 2, this.y + this.body_height,
+        this.body_width, this.body_height,
+        2, 2
+      );
+    }
+    /** render */
+    if(this.dy === 0 && this.dx === 0) {
+      draw('down');
+    } else {
+      if(this.dy < 0) {
+        draw('up');
+      } else {
+        draw('down');
+      }
+    }
+  }
+  private draw_head() {
+    /** callbacks */
+    const down = () => {
+      love.graphics.setColor(0, 0, 0, 1);
+      love.graphics.rectangle(
+        'fill', this.x + (this.width - this.head_width) / 2, this.y, this.head_width, this.head_height
+      );
+      love.graphics.setColor(1, 1, 1, 1);
+      love.graphics.rectangle(
+        'line', this.x + (this.width - this.head_width) / 2, this.y, this.head_width, this.head_height
+      );
+      /** eyes */
+      love.graphics.setPointSize(3);
+      love.graphics.points(this.x + (this.width / 2) - 5, this.y + this.head_height * 0.4, this.x + (this.width / 2) + 5, this.y + this.head_height * 0.4);
+      /** hair */
+      love.graphics.polygon(
+        'fill',
+        this.x + (this.width - this.head_width) / 2, this.y + this.head_height,
+        this.x + this.width - (this.width - this.head_width) / 2, this.y + this.head_height,
+        this.x + this.width / 2, this.y + this.head_height + 5
+      );
+    }
+    const up = () => {
+      love.graphics.rectangle(
+        'fill', this.x + (this.width - this.head_width) / 2, this.y, this.head_width, this.head_height
+      );
+      /** hair */
+      love.graphics.polygon(
+        'fill',
+        this.x + (this.width - this.head_width) / 2, this.y + this.head_height,
+        this.x + this.width - (this.width - this.head_width) / 2, this.y + this.head_height,
+        this.x + this.width / 2, this.y + this.head_height + 5
+      );
+    }
+    /** set color */
+    love.graphics.setColor(1, 1, 1, 1);
+    /** render */
+    if(this.dy === 0 && this.dx === 0) {
+      down();
+    } else {
+      if(this.dy < 0) {
+        up();
+      } else {
+        down();
+      }
     }
   }
   /**
