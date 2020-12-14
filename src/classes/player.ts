@@ -9,7 +9,7 @@ import { Utils } from "./utils";
 
 export class Player extends StaticObject {
   /** Size */
-  readonly width : number = 48;
+  readonly width : number = 26;
   readonly height : number = 48;
   /** Movement speed */
   private speed : number = 250;
@@ -53,6 +53,10 @@ export class Player extends StaticObject {
       this.x, this.y,
       this.width, this.height
     );
+
+    /** render player */
+
+
     if(environment.showBouncingBoxes) {
       this.draw_bouncing_box([1, 0, 0, .5]);
     }
