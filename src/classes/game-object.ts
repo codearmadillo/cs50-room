@@ -33,7 +33,7 @@ export abstract class GameObject {
   collides(game_object : GameObject, axis : 'x' | 'y') : boolean {
     return false;
   }
-  draw_bouncing_box(color : [number, number, number, number] = [ 0, 0, 1, .2 ]) {
+  draw_bouncing_box(color : [number, number, number, number] = [ 0, 0, 1, .7 ]) {
     love.graphics.setColor(color);
     love.graphics.polygon(
       'fill',
@@ -42,7 +42,7 @@ export abstract class GameObject {
       this.bouncing_box.x2, this.bouncing_box.y2,
       this.bouncing_box.x1, this.bouncing_box.y2,
       this.bouncing_box.x1, this.bouncing_box.y1,
-    )
+    );
   }
   abstract draw() : void;
 }

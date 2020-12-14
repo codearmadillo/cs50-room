@@ -1,9 +1,11 @@
+import { data } from "love";
 import { Joystick } from "love.joystick";
 import { environment } from "../config/environment";
 import { Game } from "../controllers/game-controller";
 import { BouncingBoxConstraints } from "../types/boucing-box";
 import { GameObject } from "./game-object";
 import { StaticObject } from "./static-object";
+import { Utils } from "./utils";
 
 export class Player extends StaticObject {
   /** Size */
@@ -33,8 +35,13 @@ export class Player extends StaticObject {
   update(dt : number) : void {
     /** Increase velocity */
     this.movement();
+    /** Room collisions */
+    this.room_collision();
     /** Check collisions */
-    this.check_collisions_with_static_objects();
+    this.narrow_collision(
+      this.broad_collision(),
+      dt
+    );
     /** Update position */
     this._x += this.dx * dt;
     this._y += this.dy * dt;
@@ -50,44 +57,80 @@ export class Player extends StaticObject {
       this.draw_bouncing_box([1, 0, 0, .5]);
     }
   }
-  check_collisions_with_static_objects() {
-    this.game.room.game_objects.filter((object) => object instanceof StaticObject).forEach((object) => {
-      if(this.collides_with(object.bouncing_box)) {
-        const collision = {
-          x: 0,
-          y: 0
+  /**
+   * Ensures that player does not get out of room
+   */
+  private room_collision() : void {
+    /** horizontal */
+    if(this.bouncing_box.x1 < this.game.room.constraints.x1 && this.dx < 0) {
+      this.dx = 0;
+      this._x = this.game.room.constraints.x1;
+    }
+    if(this.bouncing_box.x2 > this.game.room.constraints.x2 && this.dx > 0) {
+      this.dx = 0;
+      this._x = this.game.room.constraints.x2 - this.width;
+    }
+    /** vertical */
+    if(this.bouncing_box.y1 < this.game.room.constraints.y1 && this.dy < 0) {
+      this.dy = 0;
+      this._y = this.game.room.constraints.y1;
+    }
+    if(this.bouncing_box.y2 > this.game.room.constraints.y2 && this.dy > 0) {
+      this.dy = 0;
+      this._y = this.game.room.constraints.y2 - this.height;
+    }
+  }
+  /**
+   * Returns an array of objects which are possibly colided
+   */
+  private broad_collision() : StaticObject[] {
+    return this.game.room.game_objects
+      .filter((o) => {
+        if(o instanceof StaticObject) {
+          return Utils.BoxBoxCollision(this.bouncing_box, o.bouncing_box);
         }
-        /** x - left side */
-        if(this.bouncing_box.x2 - this.width / 2 > object.bouncing_box.x1 && this.dx < 0) {
-          this.dx = 0;
-        }
-        /** x - right side */
-        if(this.bouncing_box.x1 + this.width / 2 < object.bouncing_box.x2 && this.dx > 0) {
-          this.dx = 0;
-        }
-        /** y - top side */
-        if(this.bouncing_box.y2 > object.bouncing_box.y1 && this.dy > 0) {
-          this.dy = 0;
-        }
-        /** y - bottom side */
-        if(this.bouncing_box.y1 < object.bouncing_box.y2 && this.dy < 0) {
-          this.dy = 0;
-        }
-        /** break */
         return false;
+      });
+  }
+  /**
+   * Sets player speed to 0 if pixel collision on axis is detected
+   */
+  private narrow_collision(objects : StaticObject[], dt : number) : void {
+    objects.forEach((object) => {
+      if(this.dx !== 0) {
+        const delta = this.dx * dt;
+        [ this.bouncing_box.x1 + delta, this.bouncing_box.x2 + delta ].forEach((x, iX) => {
+          [ this.bouncing_box.y1, this.bouncing_box.y2 ].forEach((y, iY) => {
+            if(Utils.BoxPointCollision(object.bouncing_box, [ x, y ])) {
+              if(iX === 0 && this.dx < 0) {
+                this.dx = 0;
+                return false;
+              } else if (iX === 1 && this.dx > 0) {
+                this.dx = 0;
+                return false;
+              }
+            }
+          });
+        });
+      }
+      /** vertical */
+      if(this.dy !== 0) {
+        const delta = this.dy * dt;
+        [ this.bouncing_box.y1 + delta, this.bouncing_box.y2 + delta ].forEach((y, iY) => {
+          [ this.bouncing_box.x1, this.bouncing_box.x2 ].forEach((x, iX) => {
+            if(Utils.BoxPointCollision(object.bouncing_box, [ x, y ])) {
+              if(iY === 0 && this.dy < 0) {
+                this.dy = 0;
+                return false;
+              } else if (iY === 1 && this.dy > 0) {
+                this.dy = 0;
+                return false;
+              }
+            }
+          });
+        });
       }
     });
-  }
-  private collides_with(constraints : BouncingBoxConstraints) : boolean {
-    if(
-      this.bouncing_box.x1 < constraints.x2 &&
-      this.bouncing_box.x2 > constraints.x1 &&
-      this.bouncing_box.y1 < constraints.y2 &&
-      this.bouncing_box.y2 > constraints.y1
-    ) {
-      return true;
-    }
-    return false;
   }
   private movement() {
     /** Define input */
