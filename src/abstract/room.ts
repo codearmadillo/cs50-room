@@ -33,6 +33,9 @@ export abstract class GenericRoom implements IRoom {
     x2 : 0.8 * this.window_width
   }
   protected abstract readonly daytime : boolean;
+  private lightmap : number[][] = [];
+  private lightmap_points : {[key: number] : [number, number][]} = { }
+  private lightmap_tile : number = 3;
   protected readonly wall_size : number = 45;
   protected readonly door_size : number = 90;
   protected readonly points : PointDefinitions = {
@@ -87,11 +90,11 @@ export abstract class GenericRoom implements IRoom {
     /** Testing light */
     this.add_scene_lightsource(
       'test',
-      { x: 250, y : 250, size: 250, color: [ 1, 0, 0 ] }
+      { x: 80, y : 80, size: 250 }
     );
     this.add_scene_lightsource(
       'test2',
-      { x: this.window_width - 150, y: this.window_height - 150, size: 250, color: [ 1, 0, 0 ] }
+      { x: 400, y: 200, size: 250 }
     );
   }
   get room_width() {
@@ -110,32 +113,22 @@ export abstract class GenericRoom implements IRoom {
     if(this.daytime) {
       return;
     }
-    const dark_color : [ number, number, number, number ] = [ 0, 0, 0, .65 ];
-    const point_size = 4;
-    const lightsource = this.light_sources['test'];
-    /** config */
-    love.graphics.setColor(dark_color);
-    love.graphics.setPointSize(point_size);
-    /** iterate */
-    for(let y = 0; y < this.window_width; y += point_size) {
-      for(let x = 0; x < this.window_height; x += point_size) {
-        if(y < this.constraints.y1 || y > this.constraints.y2 || x < this.constraints.x1 || x > this.constraints.x2) {
-          love.graphics.setColor(dark_color);
-        } else {
-          const dist_x = Math.abs(x - lightsource.x);
-          const dist_y = Math.abs(y - lightsource.y);
-          const dist = Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
-          /** render */
-          if(dist < lightsource.size / 2) {
-            /** change color */
-            love.graphics.setColor(...lightsource.color, 0.10);
-          } else {
-            love.graphics.setColor(dark_color);
-          }
-        }
-        love.graphics.points(x, y);
+    const col_dark = [ 0, 0, 0, .7 ];
+    /** Tile size */
+    love.graphics.setPointSize(this.lightmap_tile);
+    /** Start rendering */
+    Object.keys(this.lightmap_points).forEach((p) => {
+      /** Parse value */
+      const value = parseFloat(p);
+      /** Set color and print points */
+      if(value > 0) {
+        love.graphics.setColor(1, 1, 1, value);
+      } else {
+        love.graphics.setColor(0, 0, 0, .7);
       }
-    }
+      /** And print points */
+      love.graphics.points(this.lightmap_points[value]);
+    });
   }
   protected add_scene_object(object : GameObject) {
     /** Push */
@@ -151,6 +144,75 @@ export abstract class GenericRoom implements IRoom {
   }
   protected add_scene_lightsource(name: string, light: LightSource) {
     this.light_sources[name] = light;
+    this.bake_lightsources();
+  }
+  private bake_lightsources() {
+    /** get sources */
+    const sources = Object.keys(this.light_sources).map((k) => this.light_sources[k]);
+    const tiles_x = Math.ceil(this.window_width / this.lightmap_tile);
+    const tiles_y = Math.ceil(this.window_height / this.lightmap_tile);
+    /** clear lightmap */
+    this.lightmap = [];
+    /** generate empty lightmap */
+    for(let y = 0; y < tiles_y; ++y) {
+      this.lightmap[y] = [];
+      for(let x = 0; x < tiles_x; ++x) {
+        this.lightmap[y][x] = 0;
+      }
+    }
+    /** start placing lights */
+    sources.forEach((source) => {
+      /** relative x and y */
+      const source_x = Math.ceil((source.x) / this.lightmap_tile);
+      const source_y = Math.ceil((source.y) / this.lightmap_tile);
+      const source_tiles = Math.ceil(source.size / this.lightmap_tile);
+      const center_x = source_x + source_tiles / 2;
+      const center_y = source_y + source_tiles / 2;
+      /** iterate through map */
+      for(let y = 0; y < tiles_y; ++y) {
+        for(let x = 0; x < tiles_x; ++x) {
+          if(
+            x >= source_x && x <= source_x + source_tiles &&
+            y >= source_y && y <= source_y + source_tiles
+          ) {
+            /** calculate distance to centerpoint */
+            const dist_x = x < center_x ? center_x - x : x == center_x ? 0 : x - center_x;
+            const dist_y = y < center_y ? center_y - y : y == center_y ? 0 : y - center_y;
+            const dist = Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
+            /** calculate relative distance */
+            const rel_dist = dist / (source_tiles / 2);
+            let val = 0;
+            /** now - set current value */
+            if(rel_dist >= 1) {
+              val = 0;
+            } else if (rel_dist > 0.8) {
+              val = 0.2;
+            } else if (rel_dist > 0.5) {
+              val = 0.5;
+            } else if (rel_dist > 0.25) {
+              val = 0.8;
+            } else {
+              val = 0.95;
+            }
+            /** within range of source */
+            this.lightmap[y][x] = val;
+          }
+        }
+      }
+    });
+    /** Categorize points */
+    this.lightmap_points = { };
+    this.lightmap.forEach((row, y) => {
+      row.forEach((col, x) => {
+        const val = col * 0.5;
+        if(!this.lightmap_points.hasOwnProperty(val)) {
+          this.lightmap_points[val] = [];
+        }
+        this.lightmap_points[val].push(
+          [ x * this.lightmap_tile, y * this.lightmap_tile ]
+        );
+      });
+    });
   }
   private draw_room_outline() {
     love.graphics.setColor(1, 1, 1, 1);
