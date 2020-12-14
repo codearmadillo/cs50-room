@@ -43,6 +43,8 @@ export abstract class GameObject {
       this.bouncing_box.x1, this.bouncing_box.y2,
       this.bouncing_box.x1, this.bouncing_box.y1,
     );
+    love.graphics.setColor(1, 1, 0, 1);
+    love.graphics.rectangle('fill', this.x, this.mask_threshold, 5, 5);
   }
   abstract draw() : void;
 }

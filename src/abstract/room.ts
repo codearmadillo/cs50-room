@@ -185,14 +185,15 @@ export abstract class GenericRoom implements IRoom {
             /** now - set current value */
             if(rel_dist >= 1) {
               val = 0;
-            } else if (rel_dist > 0.8) {
-              val = 0.2;
-            } else if (rel_dist > 0.5) {
-              val = 0.5;
-            } else if (rel_dist > 0.25) {
-              val = 0.8;
+            } else if (rel_dist <= 0.1) {
+              val = 0.65;
+            } else if (rel_dist <= 0.4) {
+              val = 0.45;
+              // 1 - parseInt((rel_dist * 10).toString(), 10) / 10;
+            } else if (rel_dist <= 0.7{
+              val = 0.30;
             } else {
-              val = 0.95;
+              val = 0.15;
             }
             /** within range of source */
             this.lightmap[y][x] = val;
@@ -204,8 +205,9 @@ export abstract class GenericRoom implements IRoom {
     this.lightmap_points = { };
     this.lightmap.forEach((row, y) => {
       row.forEach((col, x) => {
-        const val = col * 0.5;
+        const val = col;
         if(!this.lightmap_points.hasOwnProperty(val)) {
+          print(`creating ${val}`);
           this.lightmap_points[val] = [];
         }
         this.lightmap_points[val].push(

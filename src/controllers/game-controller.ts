@@ -43,7 +43,7 @@ export class Game {
     /** Render objects and player */
     let isPlayerRendered : boolean = false;
     this.room.game_objects.forEach((object) => {
-      if(object.mask_threshold < this.player.y) {
+      if(object.mask_threshold < this.player.mask_threshold) {
         object.draw();
       } else {
         if(!isPlayerRendered) {

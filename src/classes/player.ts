@@ -16,6 +16,7 @@ export class Player extends GameObject {
   private readonly head_height = this.height * 0.35;
   private readonly body_width = this.width * 0.8;
   private readonly body_height = this.height * 0.4;
+  public get mask_threshold() { return this.bouncing_box.y2 }
   /** Movement speed */
   private speed : number = 200;
   /** Simple animation */
