@@ -8,7 +8,7 @@ import { GameObject } from "./game-object";
 import { StaticObject } from "./static-object";
 import { Utils } from "./utils";
 
-export class Player extends StaticObject {
+export class Player extends GameObject {
   /** Size */
   readonly width : number = 32;
   readonly height : number = 48;
@@ -28,6 +28,15 @@ export class Player extends StaticObject {
   /** Controller */
   private readonly controller : Joystick;
   private readonly controller_deadzone : number = 0.25;
+  /** Bouncing box */
+  public get bouncing_box() : BouncingBoxConstraints {
+    return {
+      x1: this.x + 5,
+      y1: this.y + this.height - 15,
+      x2: this.x + this.width - 5,
+      y2: this.y + this.height + 5
+    }
+  }
   /** Constructor */
   constructor(
     private readonly game : Game,
