@@ -47,13 +47,12 @@ export class Game {
         object.draw();
       } else {
         if(!isPlayerRendered) {
-          //this.player.draw();
+          this.player.draw();
           isPlayerRendered = true;
         }
         object.draw();
       }
     });
-    this.player.draw();
     /** Light pass */
     // this.room.draw_lightmask();
     /** Draw action for interactive objects */
