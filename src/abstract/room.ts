@@ -12,6 +12,7 @@ import { environment } from "../config/environment";
 import { InteractiveObject } from "../classes/interactive_object";
 import { GameObject } from "../classes/game-object";
 import { LightSource } from "../classes/lightsource";
+import { getDistance } from "love.physics";
 
 interface PointDefinitions {
   inner : {
@@ -64,7 +65,6 @@ export abstract class GenericRoom implements IRoom {
       ]
     }
   };
-  protected abstract readonly sun_direction : number;
   private _game_objects : GameObject[] = [];
   public get game_objects() {
     return this._game_objects;
@@ -84,6 +84,15 @@ export abstract class GenericRoom implements IRoom {
     /** Doors */
     this.add_scene_object(new Door(this.constraints.x1 + 50, this.constraints.y1));
     this.add_scene_object(new Door(this.constraints.x2 - 100, this.constraints.y2));
+    /** Testing light */
+    this.add_scene_lightsource(
+      'test',
+      { x: 250, y : 250, size: 250, color: [ 1, 0, 0 ] }
+    );
+    this.add_scene_lightsource(
+      'test2',
+      { x: this.window_width - 150, y: this.window_height - 150, size: 250, color: [ 1, 0, 0 ] }
+    );
   }
   get room_width() {
     return this.constraints.x2 - this.constraints.x1;
@@ -96,15 +105,34 @@ export abstract class GenericRoom implements IRoom {
     this.draw_floor();
     this.draw_carper();
     this.draw_room_outline();
-    this.draw_object_shadows();
   }
   draw_lightmask() {
     if(this.daytime) {
       return;
     }
-    for(let y = 0; y < this.window_width; ++y) {
-      for(let x = 0; x < this.window_height; ++x) {
-        love.graphics.setColor(0, 0, 0, 0.85);
+    const dark_color : [ number, number, number, number ] = [ 0, 0, 0, .65 ];
+    const point_size = 4;
+    const lightsource = this.light_sources['test'];
+    /** config */
+    love.graphics.setColor(dark_color);
+    love.graphics.setPointSize(point_size);
+    /** iterate */
+    for(let y = 0; y < this.window_width; y += point_size) {
+      for(let x = 0; x < this.window_height; x += point_size) {
+        if(y < this.constraints.y1 || y > this.constraints.y2 || x < this.constraints.x1 || x > this.constraints.x2) {
+          love.graphics.setColor(dark_color);
+        } else {
+          const dist_x = Math.abs(x - lightsource.x);
+          const dist_y = Math.abs(y - lightsource.y);
+          const dist = Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
+          /** render */
+          if(dist < lightsource.size / 2) {
+            /** change color */
+            love.graphics.setColor(...lightsource.color, 0.10);
+          } else {
+            love.graphics.setColor(dark_color);
+          }
+        }
         love.graphics.points(x, y);
       }
     }
@@ -123,9 +151,6 @@ export abstract class GenericRoom implements IRoom {
   }
   protected add_scene_lightsource(name: string, light: LightSource) {
     this.light_sources[name] = light;
-  }
-  private draw_object_shadows() {
-
   }
   private draw_room_outline() {
     love.graphics.setColor(1, 1, 1, 1);

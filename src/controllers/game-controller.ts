@@ -54,7 +54,7 @@ export class Game {
       }
     });
     /** Light pass */
-    // this.room.draw_lightmask();
+    this.room.draw_lightmask();
     /** Draw action for interactive objects */
     this.room.game_objects.filter((object) => object instanceof InteractiveObject).forEach((object) => {
       // (object as InteractiveObject).draw_action_if_available(this.player);
