@@ -20,7 +20,8 @@ export class Door extends InteractiveObject {
   }
   constructor(
     protected _x : number,
-    protected _y : number
+    protected _y : number,
+    readonly key : string
   ) {
     super();
   }

@@ -1,7 +1,7 @@
 import { StaticObject } from "../classes/static-object";
 import { Armchair } from "../classes/objects/armchair";
 import { Couch } from "../classes/objects/couch";
-import { Door } from "../classes/objects/door";
+import { Door } from "../classes/live-objects/door";
 import { Fireplace } from "../classes/objects/fireplace";
 import { Piano } from "../classes/objects/piano";
 import { SmallTable } from "../classes/objects/small-table";
@@ -13,6 +13,7 @@ import { InteractiveObject } from "../classes/interactive_object";
 import { GameObject } from "../classes/game-object";
 import { LightSource } from "../classes/lightsource";
 import { getDistance } from "love.physics";
+import { Game } from "../controllers/game-controller";
 
 interface PointDefinitions {
   inner : {
@@ -27,8 +28,8 @@ interface PointDefinitions {
 
 export abstract class GenericRoom implements IRoom {
   public readonly constraints = {
-    y1 : 0.23 * this.window_height,
-    y2 : 0.92 * this.window_height,
+    y1 : 0.20 * this.window_height,
+    y2 : 0.90 * this.window_height,
     x1 : 0.2 * this.window_width,
     x2 : 0.8 * this.window_width
   }
@@ -74,7 +75,7 @@ export abstract class GenericRoom implements IRoom {
   }
   private light_sources : { [key: string] : LightSource } = { };
   public player_y : number = 0;
-  constructor(protected readonly window_width : number, protected readonly window_height : number) {
+  constructor(protected readonly window_width : number, protected readonly window_height : number,readonly title : string, protected readonly game : Game) {
     /** Add generic static objects */
     /** Top right corner */
     this.add_scene_object(new Armchair(this.constraints.x2 - 115, this.constraints.y1 + 70));
@@ -85,16 +86,16 @@ export abstract class GenericRoom implements IRoom {
     this.add_scene_object(new Couch(this.constraints.x1 + 20, this.constraints.y2 - 135));
     this.add_scene_object(new Fireplace(this.constraints.x1 + 105, this.constraints.y2 - 15));
     /** Doors */
-    this.add_scene_object(new Door(this.constraints.x1 + 50, this.constraints.y1));
-    this.add_scene_object(new Door(this.constraints.x2 - 100, this.constraints.y2));
+    this.add_scene_object(new Door(this.constraints.x1 + 50, this.constraints.y1, 'door-enter'));
+    this.add_scene_object(new Door(this.constraints.x2 - 100, this.constraints.y2, 'door-exit'));
     /** Testing light */
     this.add_scene_lightsource(
       'test',
-      { x: 80, y : 80, size: 250 }
+      { x: 80, y : 80, size: 350 }
     );
     this.add_scene_lightsource(
       'test2',
-      { x: 400, y: 200, size: 250 }
+      { x: 400, y: 200, size: 350 }
     );
   }
   get room_width() {
@@ -121,15 +122,12 @@ export abstract class GenericRoom implements IRoom {
       /** Parse value */
       const value = parseFloat(p);
       /** Set color and print points */
-      if(value > 0) {
-        love.graphics.setColor(1, 1, 1, value);
-      } else {
-        love.graphics.setColor(0, 0, 0, .7);
-      }
+      love.graphics.setColor(0, 0, 0, Math.min(0.9, value));
       /** And print points */
       love.graphics.points(this.lightmap_points[value]);
     });
   }
+  abstract action(item : InteractiveObject) : void;;
   protected add_scene_object(object : GameObject) {
     /** Push */
     this._game_objects.push(object);
@@ -190,7 +188,7 @@ export abstract class GenericRoom implements IRoom {
             } else if (rel_dist <= 0.4) {
               val = 0.45;
               // 1 - parseInt((rel_dist * 10).toString(), 10) / 10;
-            } else if (rel_dist <= 0.7{
+            } else if (rel_dist <= 0.7) {
               val = 0.30;
             } else {
               val = 0.15;
@@ -205,9 +203,8 @@ export abstract class GenericRoom implements IRoom {
     this.lightmap_points = { };
     this.lightmap.forEach((row, y) => {
       row.forEach((col, x) => {
-        const val = col;
+        const val = 1 - col;
         if(!this.lightmap_points.hasOwnProperty(val)) {
-          print(`creating ${val}`);
           this.lightmap_points[val] = [];
         }
         this.lightmap_points[val].push(

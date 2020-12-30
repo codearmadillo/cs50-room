@@ -12,24 +12,7 @@ export abstract class InteractiveObject extends GameObject {
       y2: this.y - this.width - 10
     }
   }
-  /** Draws action button if required */
-  draw_action_if_available(player : Player) {
-    if(this.is_within_action_area(player)) {
-      love.graphics.setColor(1, 1, 1, 1);
-      love.graphics.circle(
-        'fill',
-        this.x + this.width / 2, this.y - this.height,
-        16
-      );
-      love.graphics.setColor(0, 0, 0, 1);
-      love.graphics.setFont(environment.fonts.interaction);
-      love.graphics.printf(
-        "A",
-        this.x + this.width / 2 - 5, this.y - this.height - 10,
-        16, "center"
-      )
-    }
-  }
+  abstract readonly key : string;
   draw() { }
   draw_interaction_box(color : [number, number, number, number] = [ 1, 0, 1, .2 ]) {
     love.graphics.setColor(color);
@@ -41,8 +24,5 @@ export abstract class InteractiveObject extends GameObject {
       this.interaction_box.x1, this.interaction_box.y2,
       this.interaction_box.x1, this.interaction_box.y1,
     )
-  }
-  private is_within_action_area(player : Player) : boolean {
-    return true;
   }
 }

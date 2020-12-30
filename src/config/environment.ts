@@ -8,9 +8,9 @@ interface IEnvironment {
   fonts : { [key : string] : Font };
 }
 export const environment : IEnvironment = {
-  showBouncingBoxes: false,
-  showInteractionRadius: false,
-  showMasks: false,
+  showBouncingBoxes: true,
+  showInteractionRadius: true,
+  showMasks: true,
   colours: {
     white: [1, 1, 1, 1],
     gray_1: [235 / 255, 235 / 255, 235 / 255, 1],

@@ -5,10 +5,11 @@ import { environment } from "../config/environment";
 import { Game } from "../controllers/game-controller";
 import { BouncingBoxConstraints } from "../types/boucing-box";
 import { GameObject } from "./game-object";
+import { InteractiveObject } from "./interactive_object";
 import { StaticObject } from "./static-object";
 import { Utils } from "./utils";
 
-export class Player extends GameObject {
+export class Player extends StaticObject {
   /** Size */
   readonly width : number = 32;
   readonly height : number = 48;
@@ -36,6 +37,14 @@ export class Player extends GameObject {
       y1: this.y + this.height - 15,
       x2: this.x + this.width - 5,
       y2: this.y + this.height + 5
+    }
+  }
+  public get interaction_box() : BouncingBoxConstraints {
+    return {
+      x1: this.x - 35,
+      y1: this.y - 35,
+      x2: this.x + this.width + 35,
+      y2: this.y + this.height + 35
     }
   }
   /** Constructor */
@@ -95,6 +104,15 @@ export class Player extends GameObject {
     if(environment.showBouncingBoxes) {
       this.draw_bouncing_box([1, 0, 0, .5]);
     }
+    if(environment.showInteractionRadius) {
+      this.draw_interaction_box();
+    }
+  }
+  draw_action(object : InteractiveObject) : boolean {
+    if(Utils.BoxBoxCollision(object.interaction_box, this.interaction_box)) {
+      return true;
+    }
+    return false;
   }
   private draw_legs() {
     const draw_leg = (x : number, id : 0 | 1) => {
@@ -191,6 +209,17 @@ export class Player extends GameObject {
       }
     }
   }
+  private draw_interaction_box(color : [number, number, number, number] = [ 1, 0, 1, .2 ]) {
+    love.graphics.setColor(color);
+    love.graphics.polygon(
+      'fill',
+      this.interaction_box.x1, this.interaction_box.y1,
+      this.interaction_box.x2, this.interaction_box.y1,
+      this.interaction_box.x2, this.interaction_box.y2,
+      this.interaction_box.x1, this.interaction_box.y2,
+      this.interaction_box.x1, this.interaction_box.y1,
+    )
+  }
   /**
    * Ensures that player does not get out of room
    */
@@ -207,11 +236,11 @@ export class Player extends GameObject {
     /** vertical */
     if(this.bouncing_box.y1 < this.game.room.constraints.y1 && this.dy < 0) {
       this.dy = 0;
-      this._y = this.game.room.constraints.y1;
+      this._y = this.game.room.constraints.y1 - (this.bouncing_box.y2 - this.bouncing_box.y1);
     }
     if(this.bouncing_box.y2 > this.game.room.constraints.y2 && this.dy > 0) {
       this.dy = 0;
-      this._y = this.game.room.constraints.y2 - this.height;
+      this._y = this.game.room.constraints.y2 - this.height - 25;
     }
   }
   /**
